@@ -1,23 +1,31 @@
 package se.keyelementab.findwayhome
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationListener {
+    private val TAG = "MainActivity"
+
+    private lateinit var locationManager: LocationManager
+    private val locationPermissionCode = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -30,9 +38,47 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_set_current_location -> {
+                Log.d(TAG, "Set current location clicked")
+                getLocation()
+                true
+            }
+            R.id.action_about -> {
+                Log.d(TAG, "About clicked")
+                true
+            }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun getLocation() {
+        Log.d(TAG, "getLocation")
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            Log.d(TAG, "getLocation requestPermissions")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
+    }
+    override fun onLocationChanged(location: Location) {
+        Log.d(TAG, "Latitude: " + location.latitude + " , Longitude: " + location.longitude)
+        val latTextView = findViewById<TextView>(R.id.latTextView)
+        val longTextView = findViewById<TextView>(R.id.longTextView)
+        latTextView.text = "lat " + location.latitude
+        longTextView.text = "long " + location.longitude
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        Log.d(TAG, "onRequestPermissionsResult")
+        if (requestCode == locationPermissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
