@@ -1,6 +1,5 @@
 package se.keyelementab.findwayhome
 
-import android.animation.Animator
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,18 +12,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private val TAG = "MainActivity"
 
-    private lateinit var fab: FloatingActionButton
-    private lateinit var fabBGLayout: View
-    private lateinit var fabAbout: LinearLayout
-    private lateinit var fabSetDestination: LinearLayout
+    private val fabAnimationHandler = FabAnimationHandler(this)
+
+
 
     private lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
@@ -32,57 +27,27 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //setSupportActionBar(findViewById(R.id.toolbar))
-//        supportActionBar!!.setDisplayShowTitleEnabled(false)
+    }
 
-        fab = findViewById<FloatingActionButton>(R.id.fab)
-        fabBGLayout = findViewById<View>(R.id.fabBGLayout)
-        fabAbout = findViewById<LinearLayout>(R.id.fabAbout)
-        fabSetDestination = findViewById<LinearLayout>(R.id.fabSetDestination)
-
-
-        fab.setOnClickListener {
-            if (View.GONE == fabBGLayout.visibility) {
-                showFABMenu()
-            } else {
-                closeFABMenu()
+    override fun onResume() {
+        super.onResume()
+        val onItemClickInterface : FabAnimationHandler.ClickListener = object : FabAnimationHandler.ClickListener {
+            override fun onAboutClicked() {
+                Log.d(TAG, "onAboutClicked")
+            }
+            override fun onSetDestinationClicked() {
+                Log.d(TAG, "onSetDestinationClicked")
+                getLocation()
             }
         }
 
-        fabBGLayout.setOnClickListener { closeFABMenu() }
+        fabAnimationHandler.enableFab(onItemClickInterface)
     }
 
-    private fun showFABMenu() {
-        fabAbout.visibility = View.VISIBLE
-        fabSetDestination.visibility = View.VISIBLE
-        fabBGLayout.visibility = View.VISIBLE
-        fab.animate().rotationBy(180F)
-        fabAbout.animate().translationY(-resources.getDimension(R.dimen.standard_75))
-        fabSetDestination.animate().translationY(-resources.getDimension(R.dimen.standard_120))
+    override fun onPause() {
+        super.onPause()
+        fabAnimationHandler.disableFab()
     }
-
-    private fun closeFABMenu() {
-        fabBGLayout.visibility = View.GONE
-        fab.animate().rotation(0F)
-        fabAbout.animate().translationY(0f)
-        fabSetDestination.animate().translationY(0f)
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animator: Animator) {}
-                    override fun onAnimationEnd(animator: Animator) {
-                        if (View.GONE == fabBGLayout.visibility) {
-                            fabAbout.visibility = View.GONE
-                            fabSetDestination.visibility = View.GONE
-                        }
-                    }
-
-                    override fun onAnimationCancel(animator: Animator) {}
-                    override fun onAnimationRepeat(animator: Animator) {}
-                })
-
-    }
-
-
-
 /*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -116,9 +81,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             Log.d(TAG, "getLocation requestPermissions")
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        } else {
+            Log.d(TAG, "getLocation requestLocationUpdates")
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
     }
+
     override fun onLocationChanged(location: Location) {
         Log.d(TAG, "Latitude: " + location.latitude + " , Longitude: " + location.longitude)
         val latTextView = findViewById<TextView>(R.id.latTextView)
@@ -126,13 +94,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
         latTextView.text = "lat " + location.latitude
         longTextView.text = "long " + location.longitude
     }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-            }
-            else {
+            //    getLocation()
+            } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
