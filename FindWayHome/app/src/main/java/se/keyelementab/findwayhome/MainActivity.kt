@@ -14,6 +14,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +23,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener {
     private val TAG = "MainActivity"
-    private val DEBUG = true
+    private val DEBUG = false
 
     private val LOCATION_UPDATE_TIME_MS = 5000L
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
@@ -55,6 +56,9 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     var bearingToDestination : Float? = null
 
     private val LOCATION_PERMISSION_CODE = 2
+
+    private val COMPASS_UPDATE_DELAY_MS = 200
+    private var latestCompassUpdateTimeMs : Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -176,6 +180,13 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
+        // these calls are too frequent and can not
+        if (latestCompassUpdateTimeMs != null &&
+            (System.currentTimeMillis() - latestCompassUpdateTimeMs!!) < COMPASS_UPDATE_DELAY_MS) {
+            return
+        }
+        latestCompassUpdateTimeMs = System.currentTimeMillis()
+
         val degree = Math.round(event!!.values[0]).toFloat()
         Log.d(TAG, "onSensorChanged, bearing: " + degree)
 
@@ -188,8 +199,11 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         if (bearingToDestination != null) {
             // TODO: degree is to the magnetic north
             Log.d(TAG, "turnImage: " + directionManager.degreesToTurnImage(bearingToDestination!!, degree))
-            // TODO: update image based on bearingToDestination
 
+            val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
+            val turnDegrees = directionManager.degreesToTurnImage(bearingToDestination!!, degree)
+            arrowImageView.setRotation(turnDegrees)
+            Log.d(TAG, "rotate image: " + turnDegrees)
         }
     }
 
