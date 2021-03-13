@@ -1,6 +1,7 @@
 package se.keyelementab.findwayhome
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -11,17 +12,33 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private val TAG = "MainActivity"
 
+    private val LOCATION_UPDATE_TIME_MS = 5000L
+    private val LOCATION_UPDATE_DISTANCE_METERS = 0f
+
+    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                                               Manifest.permission.ACCESS_COARSE_LOCATION)
+
     private val fabAnimationHandler = FabAnimationHandler(this)
 
+    /**
+     * Flag indicating that the first received position from the location manager is to be stored
+     * as the destination.
+     */
+    private var firstReceivedPositionIsDestination = false
 
+    //private lateinit var locationManager: LocationManager = null
+    val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
 
-    private lateinit var locationManager: LocationManager
+    // TODO: can this be static?
+    val sharedPrefManager = SharedPrefManager()
+
+    var currentLocation : Location? = null
+
     private val locationPermissionCode = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +52,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
             override fun onAboutClicked() {
                 Log.d(TAG, "onAboutClicked")
             }
+
             override fun onSetDestinationClicked() {
                 Log.d(TAG, "onSetDestinationClicked")
+                firstReceivedPositionIsDestination = true
                 getLocation()
             }
         }
@@ -48,42 +67,25 @@ class MainActivity : AppCompatActivity(), LocationListener {
         super.onPause()
         fabAnimationHandler.disableFab()
     }
-/*
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        return when (item.itemId) {
-            R.id.action_set_current_location -> {
-                Log.d(TAG, "Set current location clicked")
-                getLocation()
-                true
-            }
-            R.id.action_about -> {
-                Log.d(TAG, "About clicked")
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-*/
+    @SuppressLint("MissingPermission") // the permission is checked using checkPermissions
     private fun getLocation() {
         Log.d(TAG, "getLocation")
 
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+        if (!checkPermissions()) {
             Log.d(TAG, "getLocation requestPermissions")
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+            ActivityCompat.requestPermissions(this,
+                    REQUIRED_PERMISSIONS,
+                    locationPermissionCode)
         } else {
             Log.d(TAG, "getLocation requestLocationUpdates")
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
+//            if (locationManager == null) {
+//                locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    LOCATION_UPDATE_TIME_MS,
+                    LOCATION_UPDATE_DISTANCE_METERS,
+                    this)
         }
     }
 
@@ -93,16 +95,59 @@ class MainActivity : AppCompatActivity(), LocationListener {
         val longTextView = findViewById<TextView>(R.id.longTextView)
         latTextView.text = "lat " + location.latitude
         longTextView.text = "long " + location.longitude
+
+        if (firstReceivedPositionIsDestination) {
+            sharedPrefManager.setLongLat(this, location)
+            firstReceivedPositionIsDestination = false
+        }
+
+        currentLocation = location
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == locationPermissionCode) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //    getLocation()
+            var allGranted = true
+            if (grantResults.isEmpty()) {
+                allGranted = false
+            }
+
+            grantResults.forEach {
+                if (it != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false
+                }
+            }
+
+            if (allGranted) {
+                // call getLocation again, as this is where the permission request was instigated
+                getLocation()
             } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                presentPermissionsAreMandatoryDialog()
             }
         }
+    }
+
+    fun presentPermissionsAreMandatoryDialog() {
+        // TODO: use AlertDialog, and better text
+        Toast.makeText(this, R.string.permissions_are_mandatory, Toast.LENGTH_SHORT).show()
+    }
+
+    fun checkPermissions() : Boolean {
+        for (permission in REQUIRED_PERMISSIONS) {
+            val granted = ActivityCompat.checkSelfPermission(
+                    this,
+                    permission) == PackageManager.PERMISSION_GRANTED
+            if (granted) {
+                //TODO: simplify, granted ? "" : "not"
+                Log.d(TAG, "Permission " + permission + " granted")
+            } else {
+                Log.d(TAG, "Permission " + permission + " not granted")
+            }
+
+            if (!granted) {
+                return false
+            }
+        }
+        return true
     }
 }
