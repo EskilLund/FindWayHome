@@ -13,6 +13,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +22,15 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener {
     private val TAG = "MainActivity"
+    private val DEBUG = true
 
     private val LOCATION_UPDATE_TIME_MS = 5000L
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
 
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION)
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
 
     private val fabAnimationHandler = FabAnimationHandler(this)
 
@@ -39,16 +43,18 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     private val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
     private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
 
-    // TODO: can this be static?
-    val sharedPrefManager = SharedPrefManager()
-
-    var currentLocation : Location? = null
-
-    var destinationLat : Double? = null
-    var destinationLong : Double? = null
+    // TODO: can these be static?
+    private val sharedPrefManager = SharedPrefManager()
+    private val directionManager by lazy { DirectionManager() }
 
 
-    private val locationPermissionCode = 2
+    /**
+     * Direction from current position to the destination position.
+     * This is in degrees east of true north.
+     */
+    var bearingToDestination : Float? = null
+
+    private val LOCATION_PERMISSION_CODE = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,22 +92,28 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
-            ActivityCompat.requestPermissions(this,
-                    REQUIRED_PERMISSIONS,
-                    locationPermissionCode)
+            ActivityCompat.requestPermissions(
+                this,
+                REQUIRED_PERMISSIONS,
+                LOCATION_PERMISSION_CODE
+            )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
 //            if (locationManager == null) {
 //                locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 //            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    LOCATION_UPDATE_TIME_MS,
-                    LOCATION_UPDATE_DISTANCE_METERS,
-                    this)
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                LOCATION_UPDATE_TIME_MS,
+                LOCATION_UPDATE_DISTANCE_METERS,
+                this
+            )
 
-            sensorManager.registerListener(this,
-                    sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                    SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(
+                this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_UI
+            )
         }
     }
 
@@ -112,37 +124,86 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     }
 
     override fun onLocationChanged(location: Location) {
-        Log.d(TAG, "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude)
-        val latTextView = findViewById<TextView>(R.id.latTextView)
-        val longTextView = findViewById<TextView>(R.id.longTextView)
-        latTextView.text = "lat " + location.latitude
-        longTextView.text = "long " + location.longitude
+        Log.d(
+            TAG,
+            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
+        )
+
+        if (DEBUG) {
+            val latTextView = findViewById<TextView>(R.id.latTextView)
+            val longTextView = findViewById<TextView>(R.id.longTextView)
+            latTextView.visibility = View.VISIBLE
+            longTextView.visibility = View.VISIBLE
+            latTextView.text = "lat: " + location.latitude
+            longTextView.text = "long: " + location.longitude
+        }
 
         if (firstReceivedPositionIsDestination) {
-            sharedPrefManager.setLongLat(this, location)
+            if (DEBUG) {
+                // for debugging purposes, set the destination to Turning Torso in Malmö, Sweden
+                val locationTurningTorso = Location(LocationManager.GPS_PROVIDER)
+                locationTurningTorso.latitude = 55.607997568
+                locationTurningTorso.longitude = 12.97249611
+                sharedPrefManager.setLongLat(this, locationTurningTorso)
+            } else {
+                sharedPrefManager.setLongLat(this, location)
+            }
             firstReceivedPositionIsDestination = false
         }
 
-        currentLocation = location
+        if (sharedPrefManager.isDestinationSet(this)) {
+//            directionToDestination = directionManager.calculateDirectionToDestination(
+//                sharedPrefManager.getLatitude(this),
+//                sharedPrefManager.getLongitude(this),
+//                location)
+            val destination = Location(LocationManager.GPS_PROVIDER)
+            destination.latitude = sharedPrefManager.getLatitude(this)
+            destination.longitude = sharedPrefManager.getLongitude(this)
+            bearingToDestination = location.bearingTo(destination)
+            Log.d(TAG, "bearingToDestination: " + bearingToDestination)
+
+            Log.d(TAG, "distance: " + location.distanceTo(destination))
+
+
+
+//            val locationNewYork = Location(LocationManager.GPS_PROVIDER)
+//            locationNewYork.latitude = 40.730610
+//            locationNewYork.longitude = -73.935242
+//            Log.d(TAG, "newyorkbearing: " + location.bearingTo(locationNewYork))
+
+
+        }
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         val degree = Math.round(event!!.values[0]).toFloat()
-        Log.d(TAG, "onSensorChanged, direction: " + degree)
-        //Log.d(TAG, "onSensorChanged, event: " + event)
+        Log.d(TAG, "onSensorChanged, bearing: " + degree)
 
+        if (DEBUG) {
+            val bearingTextView = findViewById<TextView>(R.id.bearingTextView)
+            bearingTextView.visibility = View.VISIBLE
+            bearingTextView.text = "Compass bearing: " + degree
+        }
 
-        val directionTextView = findViewById<TextView>(R.id.directionTextView)
-        directionTextView.text = "direction " + degree
+        if (bearingToDestination != null) {
+            // TODO: degree is to the magnetic north
+            Log.d(TAG, "turnImage: " + directionManager.degreesToTurnImage(bearingToDestination!!, degree))
+            // TODO: update image based on bearingToDestination
+
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // no relevant
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         Log.d(TAG, "onRequestPermissionsResult")
-        if (requestCode == locationPermissionCode) {
+        if (requestCode == LOCATION_PERMISSION_CODE) {
             var allGranted = true
             if (grantResults.isEmpty()) {
                 allGranted = false
@@ -171,8 +232,9 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     fun checkPermissions() : Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             val granted = ActivityCompat.checkSelfPermission(
-                    this,
-                    permission) == PackageManager.PERMISSION_GRANTED
+                this,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
             if (granted) {
                 //TODO: simplify, granted ? "" : "not"
                 Log.d(TAG, "Permission " + permission + " granted")

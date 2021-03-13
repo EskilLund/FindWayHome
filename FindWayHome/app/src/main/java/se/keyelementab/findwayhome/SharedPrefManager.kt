@@ -9,8 +9,11 @@ class SharedPrefManager {
     private val KEY_LATITUDE = "destination_latitude"
     private val KEY_LONGITUDE = "destination_longitude"
     private val SHARED_PREF_NAME = "PREFERENCE_DESTINATION"
-
     private val DEFAULT_VALUE = 0L
+
+    /** Cache values so that the Shared Pref doesn't have to be read every time. */
+    var destinationLatCache : Double? = null
+    var destinationLongCache : Double? = null
 
     fun setLongLat(context: Context, location: Location) {
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
@@ -18,19 +21,30 @@ class SharedPrefManager {
         putDouble(editor, KEY_LONGITUDE, location.longitude)
         putDouble(editor, KEY_LATITUDE, location.latitude)
         editor.commit() // commit = sync, apply = async
+        destinationLatCache = location.latitude
+        destinationLongCache = location.longitude
     }
 
     fun isDestinationSet(context: Context) : Boolean {
+        if (destinationLatCache != null || destinationLongCache != null) {
+            return true
+        }
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreference.contains(KEY_LONGITUDE) && sharedPreference.contains(KEY_LATITUDE)
     }
 
     fun getLongitude(context: Context) : Double {
+        if (destinationLongCache != null) {
+            return destinationLongCache!!
+        }
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return getDouble(sharedPreference, KEY_LONGITUDE)
     }
 
     fun getLatitude(context: Context) : Double {
+        if (destinationLatCache != null) {
+            return destinationLatCache!!
+        }
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return getDouble(sharedPreference, KEY_LATITUDE)
     }
