@@ -4,24 +4,29 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import android.widget.TextView
 
-class MainActivity : AppCompatActivity(), LocationListener {
+
+class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener {
     private val TAG = "MainActivity"
 
     private val LOCATION_UPDATE_TIME_MS = 5000L
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
 
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                                               Manifest.permission.ACCESS_COARSE_LOCATION)
+            Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private val fabAnimationHandler = FabAnimationHandler(this)
 
@@ -31,13 +36,17 @@ class MainActivity : AppCompatActivity(), LocationListener {
      */
     private var firstReceivedPositionIsDestination = false
 
-    //private lateinit var locationManager: LocationManager = null
-    val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+    private val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+    private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
 
     // TODO: can this be static?
     val sharedPrefManager = SharedPrefManager()
 
     var currentLocation : Location? = null
+
+    var destinationLat : Double? = null
+    var destinationLong : Double? = null
+
 
     private val locationPermissionCode = 2
 
@@ -56,29 +65,32 @@ class MainActivity : AppCompatActivity(), LocationListener {
             override fun onSetDestinationClicked() {
                 Log.d(TAG, "onSetDestinationClicked")
                 firstReceivedPositionIsDestination = true
-                getLocation()
             }
         }
 
         fabAnimationHandler.enableFab(onItemClickInterface)
+
+        startGetLocation()
     }
 
     override fun onPause() {
         super.onPause()
         fabAnimationHandler.disableFab()
+
+        stopGetLocation()
     }
 
     @SuppressLint("MissingPermission") // the permission is checked using checkPermissions
-    private fun getLocation() {
-        Log.d(TAG, "getLocation")
+    private fun startGetLocation() {
+        Log.d(TAG, "startGetLocation")
 
         if (!checkPermissions()) {
-            Log.d(TAG, "getLocation requestPermissions")
+            Log.d(TAG, "startGetLocation requestPermissions")
             ActivityCompat.requestPermissions(this,
                     REQUIRED_PERMISSIONS,
                     locationPermissionCode)
         } else {
-            Log.d(TAG, "getLocation requestLocationUpdates")
+            Log.d(TAG, "startGetLocation requestLocationUpdates")
 //            if (locationManager == null) {
 //                locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 //            }
@@ -86,11 +98,21 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     LOCATION_UPDATE_TIME_MS,
                     LOCATION_UPDATE_DISTANCE_METERS,
                     this)
+
+            sensorManager.registerListener(this,
+                    sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                    SensorManager.SENSOR_DELAY_UI)
         }
     }
 
+    private fun stopGetLocation() {
+        Log.d(TAG, "stopGetLocation")
+        locationManager.removeUpdates(this);
+        sensorManager.unregisterListener(this);
+    }
+
     override fun onLocationChanged(location: Location) {
-        Log.d(TAG, "Latitude: " + location.latitude + " , Longitude: " + location.longitude)
+        Log.d(TAG, "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude)
         val latTextView = findViewById<TextView>(R.id.latTextView)
         val longTextView = findViewById<TextView>(R.id.longTextView)
         latTextView.text = "lat " + location.latitude
@@ -102,6 +124,20 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
 
         currentLocation = location
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        val degree = Math.round(event!!.values[0]).toFloat()
+        Log.d(TAG, "onSensorChanged, direction: " + degree)
+        //Log.d(TAG, "onSensorChanged, event: " + event)
+
+
+        val directionTextView = findViewById<TextView>(R.id.directionTextView)
+        directionTextView.text = "direction " + degree
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // no relevant
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -120,7 +156,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
             if (allGranted) {
                 // call getLocation again, as this is where the permission request was instigated
-                getLocation()
+                startGetLocation()
             } else {
                 presentPermissionsAreMandatoryDialog()
             }
@@ -150,4 +186,5 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
         return true
     }
+
 }
