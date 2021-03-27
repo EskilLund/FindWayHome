@@ -38,10 +38,21 @@ class FabAnimationHandler(val activity: Activity) {
 
         fabBGLayout.setOnClickListener { closeFABMenu() }
 
-        fabAboutLayout.setOnClickListener { clickListener.onAboutClicked() }
-        fabAbout.setOnClickListener { clickListener.onAboutClicked() }
-        fabSetDestinationLayout.setOnClickListener { clickListener.onSetDestinationClicked() }
-        fabSetDestination.setOnClickListener { clickListener.onSetDestinationClicked() }
+        fabAboutLayout.setOnClickListener {
+            clickListener.onAboutClicked()
+            closeFABMenu()
+        }
+        fabAbout.setOnClickListener {
+            clickListener.onAboutClicked()
+            closeFABMenu()}
+        fabSetDestinationLayout.setOnClickListener {
+            clickListener.onSetDestinationClicked()
+            closeFABMenu()
+        }
+        fabSetDestination.setOnClickListener {
+            clickListener.onSetDestinationClicked()
+            closeFABMenu()
+        }
     }
 
     public fun disableFab() {
