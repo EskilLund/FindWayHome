@@ -8,6 +8,7 @@ import android.location.Location
 class SharedPrefManager {
     private val KEY_LATITUDE = "destination_latitude"
     private val KEY_LONGITUDE = "destination_longitude"
+    private val KEY_DISCLAIMER_ACCEPTED = "disclaimer_accepted"
     private val SHARED_PREF_NAME = "PREFERENCE_DESTINATION"
     private val DEFAULT_VALUE = 0L
 
@@ -47,6 +48,18 @@ class SharedPrefManager {
         }
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return getDouble(sharedPreference, KEY_LATITUDE)
+    }
+
+    fun isDisclaimerAccepted(context: Context) : Boolean {
+        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreference.getBoolean(KEY_DISCLAIMER_ACCEPTED, false)
+    }
+
+    fun setDisclaimerAccepted(context: Context) {
+        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putBoolean(KEY_DISCLAIMER_ACCEPTED, true)
+        editor.commit() // commit = sync, apply = async
     }
 
     /**

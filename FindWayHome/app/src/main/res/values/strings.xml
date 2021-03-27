@@ -5,4 +5,10 @@
 
     <string name="permissions_are_mandatory">Permission Denied and is really needed TODO</string>
 
+    <string name="disclaimer">Welcome to the FindWayHome app, an easy-to-use navigation app that points you to the destination of your choice.\nBut please be aware that this app just points you in the direction of your destination, it does not necessarily point you in the safest or always accessible way. Always be aware of your surroundings and mind your safety. You are using this app at your own risk and responsibility. Be safe and enjoy the app.</string>
+    <string name="i_have_read_terms">I have read and understood these terms.</string>
+    <string name="continue_text">Continue</string>
+    <string name="cancel_text">Cancel</string>
+
+
 </resources>
