@@ -103,6 +103,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/fabTextSize"
             android:text="@string/action_about" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -132,6 +133,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/fabTextSize"
             android:text="@string/action_set_current_location" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

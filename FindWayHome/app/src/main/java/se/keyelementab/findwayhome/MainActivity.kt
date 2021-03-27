@@ -25,7 +25,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener {
     private val TAG = "MainActivity"
-    private val DEBUG = false
+    private val DEBUG = true
 
     private val LOCATION_UPDATE_TIME_MS = 5000L
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
@@ -62,6 +62,9 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     private val COMPASS_UPDATE_DELAY_MS = 200
     private var latestCompassUpdateTimeMs : Long? = null
 
+    private var locationManagerStarted = false
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -74,6 +77,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         val onItemClickInterface : FabAnimationHandler.ClickListener = object : FabAnimationHandler.ClickListener {
             override fun onAboutClicked() {
                 Log.d(TAG, "onAboutClicked")
+                presentAboutDialog()
             }
 
             override fun onSetDestinationClicked() {
@@ -82,20 +86,21 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
                     presentDisclaimerDialog()
                 } else {
                     firstReceivedPositionIsDestination = true
+                    startGetLocation()
                 }
             }
         }
 
         fabAnimationHandler.enableFab(onItemClickInterface)
 
+        if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(this)) {
+            findViewById<ImageView>(R.id.arroyImageView).alpha = 0.4f
+        }
+
         if (!sharedPrefManager.isDisclaimerAccepted(this)) {
             presentDisclaimerDialog()
         } else {
-            if (!sharedPrefManager.isDestinationSet(this)) {
-                presentSetDestinationNowDialog()
-            } else {
-                startGetLocation()
-            }
+            startGetLocation()
         }
     }
 
@@ -127,6 +132,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         continueButton.setOnClickListener {
             dialog.dismiss()
             sharedPrefManager.setDisclaimerAccepted(this)
+
             presentSetDestinationNowDialog()
         }
 
@@ -134,6 +140,16 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
             dialog.dismiss()
         }
 
+        dialog.show()
+    }
+
+    fun presentAboutDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.about)
+        val continueButton = dialog.findViewById(R.id.continueButton) as Button
+        continueButton.setOnClickListener {
+            dialog.dismiss()
+        }
         dialog.show()
     }
 
@@ -147,6 +163,10 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     @SuppressLint("MissingPermission") // the permission is checked using checkPermissions
     private fun startGetLocation() {
         Log.d(TAG, "startGetLocation")
+
+        if (locationManagerStarted) {
+            Log.d(TAG, "startGetLocation already running")
+        }
 
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
@@ -177,8 +197,11 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
     private fun stopGetLocation() {
         Log.d(TAG, "stopGetLocation")
-        locationManager.removeUpdates(this);
-        sensorManager.unregisterListener(this);
+        if (!locationManagerStarted) {
+            Log.d(TAG, "stopGetLocation already stopped")
+        }
+        locationManager.removeUpdates(this)
+        sensorManager.unregisterListener(this)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -207,14 +230,11 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
                 sharedPrefManager.setLongLat(this, location)
             }
             firstReceivedPositionIsDestination = false
+            findViewById<ImageView>(R.id.arroyImageView).alpha = 1.0f
             Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()
         }
 
         if (sharedPrefManager.isDestinationSet(this)) {
-//            directionToDestination = directionManager.calculateDirectionToDestination(
-//                sharedPrefManager.getLatitude(this),
-//                sharedPrefManager.getLongitude(this),
-//                location)
             val destination = Location(LocationManager.GPS_PROVIDER)
             destination.latitude = sharedPrefManager.getLatitude(this)
             destination.longitude = sharedPrefManager.getLongitude(this)
@@ -253,22 +273,17 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
         if (bearingToDestination != null) {
             // TODO: degree is to the magnetic north
-            Log.d(
-                TAG, "turnImage: " + directionManager.degreesToTurnImage(
-                    bearingToDestination!!,
-                    degree
-                )
-            )
-
             val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
             val turnDegrees = directionManager.degreesToTurnImage(bearingToDestination!!, degree)
             arrowImageView.setRotation(turnDegrees)
             Log.d(TAG, "rotate image: " + turnDegrees)
+            //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
+            //Log.d(TAG, "rotate degree: " + degree)
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // no relevant
+        Log.d(TAG, "onAccuracyChanged: " + accuracy)
     }
 
     override fun onRequestPermissionsResult(

@@ -16,4 +16,6 @@
     <string name="set_destination_yes">Yes</string>
     <string name="set_destination_later">Later</string>
 
+    <string name="about_text">FindWayHome is a very simple and easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home or at your camp site), choose \"Set current location\" and the arrow will always point to that destination.</string>
+
 </resources>
