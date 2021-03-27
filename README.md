@@ -7,7 +7,6 @@ App for simply finding the direction home (or other set destination)
 - Change background color, suggest dark blue.
 - Lock to landscape
 - Generall TODOs
-- Add "do you want to set your current position as the destination? Yes/Later" AlertDialog (??) at startup
 - Add "permissions are pretty much mandatory" AlertDialog
 
 ##Last

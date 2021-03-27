@@ -1,10 +1,12 @@
 package se.keyelementab.findwayhome
 
-import android.Manifest
 //import android.R
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -29,8 +31,8 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
 
     private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
     private val fabAnimationHandler = FabAnimationHandler(this)
@@ -89,8 +91,26 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         if (!sharedPrefManager.isDisclaimerAccepted(this)) {
             presentDisclaimerDialog()
         } else {
+            if (!sharedPrefManager.isDestinationSet(this)) {
+                presentSetDestinationNowDialog()
+            } else {
+                startGetLocation()
+            }
+        }
+    }
+
+    fun presentSetDestinationNowDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(R.string.set_destination_now_question)
+
+        builder.setPositiveButton(R.string.set_destination_yes) { _, _ ->
+            firstReceivedPositionIsDestination = true
             startGetLocation()
         }
+
+        builder.setNegativeButton(R.string.set_destination_later) { _, _ ->
+        }
+        builder.show()
     }
 
     fun presentDisclaimerDialog() {
@@ -107,7 +127,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         continueButton.setOnClickListener {
             dialog.dismiss()
             sharedPrefManager.setDisclaimerAccepted(this)
-            startGetLocation()
+            presentSetDestinationNowDialog()
         }
 
         cancelButton.setOnClickListener {
@@ -131,9 +151,9 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
             ActivityCompat.requestPermissions(
-                    this,
-                    REQUIRED_PERMISSIONS,
-                    LOCATION_PERMISSION_CODE
+                this,
+                REQUIRED_PERMISSIONS,
+                LOCATION_PERMISSION_CODE
             )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
@@ -141,16 +161,16 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 //                locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 //            }
             locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    LOCATION_UPDATE_TIME_MS,
-                    LOCATION_UPDATE_DISTANCE_METERS,
-                    this
+                LocationManager.GPS_PROVIDER,
+                LOCATION_UPDATE_TIME_MS,
+                LOCATION_UPDATE_DISTANCE_METERS,
+                this
             )
 
             sensorManager.registerListener(
-                    this,
-                    sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                    SensorManager.SENSOR_DELAY_UI
+                this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_UI
             )
         }
     }
@@ -163,8 +183,8 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
     override fun onLocationChanged(location: Location) {
         Log.d(
-                TAG,
-                "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
+            TAG,
+            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
         )
 
         if (DEBUG) {
@@ -233,7 +253,12 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
         if (bearingToDestination != null) {
             // TODO: degree is to the magnetic north
-            Log.d(TAG, "turnImage: " + directionManager.degreesToTurnImage(bearingToDestination!!, degree))
+            Log.d(
+                TAG, "turnImage: " + directionManager.degreesToTurnImage(
+                    bearingToDestination!!,
+                    degree
+                )
+            )
 
             val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
             val turnDegrees = directionManager.degreesToTurnImage(bearingToDestination!!, degree)
@@ -247,9 +272,9 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == LOCATION_PERMISSION_CODE) {
@@ -281,8 +306,8 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     fun checkPermissions() : Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             val granted = ActivityCompat.checkSelfPermission(
-                    this,
-                    permission
+                this,
+                permission
             ) == PackageManager.PERMISSION_GRANTED
             if (granted) {
                 //TODO: simplify, granted ? "" : "not"

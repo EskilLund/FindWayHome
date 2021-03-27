@@ -12,4 +12,8 @@
 
     <string name="destination_set">The destination has successfully been set to your current location.</string>
 
+    <string name="set_destination_now_question">You you like to set the destination to your current location now?</string>
+    <string name="set_destination_yes">Yes</string>
+    <string name="set_destination_later">Later</string>
+
 </resources>
