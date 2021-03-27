@@ -8,7 +8,6 @@ App for simply finding the direction home (or other set destination)
 - Lock to landscape
 - Icon for app
 - Generall TODOs
-- Add disclaimer popup (AlertDialog?)
 - Add "do you want to set your current position as the destination? Yes/Later" AlertDialog (??) at startup
 - Add "permissions are pretty much mandatory" AlertDialog
 

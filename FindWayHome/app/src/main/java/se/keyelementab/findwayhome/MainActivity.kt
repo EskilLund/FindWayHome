@@ -187,6 +187,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
                 sharedPrefManager.setLongLat(this, location)
             }
             firstReceivedPositionIsDestination = false
+            Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()
         }
 
         if (sharedPrefManager.isDestinationSet(this)) {

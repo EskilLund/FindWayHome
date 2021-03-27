@@ -10,5 +10,6 @@
     <string name="continue_text">Continue</string>
     <string name="cancel_text">Cancel</string>
 
+    <string name="destination_set">The destination has successfully been set to your current location.</string>
 
 </resources>
