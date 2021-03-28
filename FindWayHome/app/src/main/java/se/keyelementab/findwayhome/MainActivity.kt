@@ -1,18 +1,19 @@
 package se.keyelementab.findwayhome
 
 //import android.R
+
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,8 +24,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     private val DEBUG = true
 
     private val REQUIRED_PERMISSIONS = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
     private val fabAnimationHandler = FabAnimationHandler(this)
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
      * This is in degrees east of true north.
      */
     var bearingToDestination : Float? = null
+
+    /** Used as starting point for the rotation animation. */
+    var previousImageDirection : Float = 0f
 
     private val LOCATION_PERMISSION_CODE = 2
 
@@ -155,9 +159,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
             ActivityCompat.requestPermissions(
-                this,
-                REQUIRED_PERMISSIONS,
-                LOCATION_PERMISSION_CODE
+                    this,
+                    REQUIRED_PERMISSIONS,
+                    LOCATION_PERMISSION_CODE
             )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
@@ -174,8 +178,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
     override fun onGPSUpdate(location: Location) {
         Log.d(
-            TAG,
-            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
+                TAG,
+                "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
         )
 
         if (DEBUG) {
@@ -223,9 +227,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == LOCATION_PERMISSION_CODE) {
@@ -257,8 +261,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     fun checkPermissions() : Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             val granted = ActivityCompat.checkSelfPermission(
-                this,
-                permission
+                    this,
+                    permission
             ) == PackageManager.PERMISSION_GRANTED
             if (granted) {
                 //TODO: simplify, granted ? "" : "not"
@@ -286,7 +290,16 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             // TODO: degree is to the magnetic north
             val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
             val turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-            arrowImageView.setRotation(turnDegrees)
+            Log.d(TAG, "onCompassHeading, animation previousImageDirection: " + previousImageDirection)
+
+            val rotate = RotateAnimation(previousImageDirection, turnDegrees, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            rotate.duration = (compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong() // duration = 80% of time to next update
+            rotate.interpolator = LinearInterpolator()
+            rotate.setFillAfter(true)
+            arrowImageView.startAnimation(rotate)
+            previousImageDirection = turnDegrees
+            //arrowImageView.setRotation(turnDegrees)
+
             Log.d(TAG, "rotate image: " + turnDegrees)
             //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
             //Log.d(TAG, "rotate degree: " + degree)

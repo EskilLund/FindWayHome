@@ -13,7 +13,7 @@ import android.util.Log
 class CompassManager : SensorEventListener {
     private val TAG = "CompassManager"
 
-    private val COMPASS_UPDATE_DELAY_MS = 200
+    public val COMPASS_UPDATE_DELAY_MS = 200
     private var latestCompassUpdateTimeMs : Long? = null
 
     private var sensorManager : SensorManager
