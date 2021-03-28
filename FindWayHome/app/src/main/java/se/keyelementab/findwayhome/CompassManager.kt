@@ -6,31 +6,37 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+/**
+ * Handles the interaction with the compass sensor.
+ */
 class CompassManager : SensorEventListener {
     private val TAG = "CompassManager"
 
     private val COMPASS_UPDATE_DELAY_MS = 200
     private var latestCompassUpdateTimeMs : Long? = null
 
+    private var sensorManager : SensorManager
+    private var compassListener: CompassListener
 
-    private lateinit var context : Context
-    private lateinit var sensorManager : SensorManager
-    private lateinit var compassListener: CompassListener
+    private var managerStarted = false
+
 
     interface CompassListener {
         fun onCompassHeading(heading: Float)
     }
 
     constructor(context : Context, compassListener: CompassListener) {
-        this.context = context
         this.sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         this.compassListener = compassListener
     }
 
     fun startCompassManager() {
+        Log.d(TAG, "startCompassManager")
+        if (managerStarted) {
+            Log.d(TAG, "startCompassManager already started")
+        }
+
         sensorManager.registerListener(
             this,
             sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
@@ -38,6 +44,11 @@ class CompassManager : SensorEventListener {
     }
 
     fun stopCompassManager() {
+        Log.d(TAG, "stopGPSManager")
+        if (!managerStarted) {
+            Log.d(TAG, "stopGPSManager already stopped")
+        }
+
         sensorManager.unregisterListener(this)
     }
 

@@ -18,12 +18,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
 
-class MainActivity : AppCompatActivity(), LocationListener, CompassManager.CompassListener {
+class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
     private val DEBUG = true
-
-    private val LOCATION_UPDATE_TIME_MS = 5000L
-    private val LOCATION_UPDATE_DISTANCE_METERS = 0f
 
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -38,13 +35,12 @@ class MainActivity : AppCompatActivity(), LocationListener, CompassManager.Compa
      */
     private var firstReceivedPositionIsDestination = false
 
-    private val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+    private lateinit var gpsManager: GPSManager
     private lateinit var compassManager: CompassManager
 
     // TODO: can these be static?
     private val sharedPrefManager = SharedPrefManager()
     private val directionUtil by lazy { DirectionUtil() }
-
 
     /**
      * Direction from current position to the destination position.
@@ -54,14 +50,13 @@ class MainActivity : AppCompatActivity(), LocationListener, CompassManager.Compa
 
     private val LOCATION_PERMISSION_CODE = 2
 
-    private var locationManagerStarted = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         compassManager = CompassManager(this, this)
+        gpsManager = GPSManager(this, this)
     }
 
     override fun onResume() {
@@ -154,13 +149,8 @@ class MainActivity : AppCompatActivity(), LocationListener, CompassManager.Compa
         stopGetLocation()
     }
 
-    @SuppressLint("MissingPermission") // the permission is checked using checkPermissions
     private fun startGetLocation() {
         Log.d(TAG, "startGetLocation")
-
-        if (locationManagerStarted) {
-            Log.d(TAG, "startGetLocation already running")
-        }
 
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
@@ -171,30 +161,18 @@ class MainActivity : AppCompatActivity(), LocationListener, CompassManager.Compa
             )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
-//            if (locationManager == null) {
-//                locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//            }
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                LOCATION_UPDATE_TIME_MS,
-                LOCATION_UPDATE_DISTANCE_METERS,
-                this
-            )
 
             compassManager.startCompassManager()
+            gpsManager.startGPSManager()
         }
     }
 
     private fun stopGetLocation() {
-        Log.d(TAG, "stopGetLocation")
-        if (!locationManagerStarted) {
-            Log.d(TAG, "stopGetLocation already stopped")
-        }
-        locationManager.removeUpdates(this)
         compassManager.stopCompassManager()
+        gpsManager.stopGPSManager()
     }
 
-    override fun onLocationChanged(location: Location) {
+    override fun onGPSUpdate(location: Location) {
         Log.d(
             TAG,
             "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
@@ -314,5 +292,4 @@ class MainActivity : AppCompatActivity(), LocationListener, CompassManager.Compa
             //Log.d(TAG, "rotate degree: " + degree)
         }
     }
-
 }
