@@ -1,7 +1,7 @@
 package se.keyelementab.findwayhome
 
-class DirectionManager {
-    private val TAG = "DirectionManager"
+class DirectionUtil {
+    private val TAG = "DirectionUtil"
 
     /**
      * Calculates how many degrees to turn the image to point to the destination.

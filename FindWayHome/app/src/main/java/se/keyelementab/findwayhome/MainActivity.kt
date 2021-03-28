@@ -6,12 +6,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -23,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
 
-class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener {
+class MainActivity : AppCompatActivity(), LocationListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
     private val DEBUG = true
 
@@ -44,11 +39,11 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
     private var firstReceivedPositionIsDestination = false
 
     private val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
-    private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
+    private lateinit var compassManager: CompassManager
 
     // TODO: can these be static?
     private val sharedPrefManager = SharedPrefManager()
-    private val directionManager by lazy { DirectionManager() }
+    private val directionUtil by lazy { DirectionUtil() }
 
 
     /**
@@ -59,15 +54,14 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
 
     private val LOCATION_PERMISSION_CODE = 2
 
-    private val COMPASS_UPDATE_DELAY_MS = 200
-    private var latestCompassUpdateTimeMs : Long? = null
-
     private var locationManagerStarted = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        compassManager = CompassManager(this, this)
     }
 
     override fun onResume() {
@@ -187,11 +181,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
                 this
             )
 
-            sensorManager.registerListener(
-                this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_UI
-            )
+            compassManager.startCompassManager()
         }
     }
 
@@ -201,7 +191,7 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
             Log.d(TAG, "stopGetLocation already stopped")
         }
         locationManager.removeUpdates(this)
-        sensorManager.unregisterListener(this)
+        compassManager.stopCompassManager()
     }
 
     override fun onLocationChanged(location: Location) {
@@ -254,38 +244,6 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
         }
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        // these calls are too frequent and can not
-        if (latestCompassUpdateTimeMs != null &&
-            (System.currentTimeMillis() - latestCompassUpdateTimeMs!!) < COMPASS_UPDATE_DELAY_MS) {
-            return
-        }
-        latestCompassUpdateTimeMs = System.currentTimeMillis()
-
-        val degree = Math.round(event!!.values[0]).toFloat()
-        Log.d(TAG, "onSensorChanged, bearing: " + degree)
-
-        if (DEBUG) {
-            val bearingTextView = findViewById<TextView>(R.id.bearingTextView)
-            bearingTextView.visibility = View.VISIBLE
-            bearingTextView.text = "Compass bearing: " + degree
-        }
-
-        if (bearingToDestination != null) {
-            // TODO: degree is to the magnetic north
-            val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
-            val turnDegrees = directionManager.degreesToTurnImage(bearingToDestination!!, degree)
-            arrowImageView.setRotation(turnDegrees)
-            Log.d(TAG, "rotate image: " + turnDegrees)
-            //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
-            //Log.d(TAG, "rotate degree: " + degree)
-        }
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        Log.d(TAG, "onAccuracyChanged: " + accuracy)
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -336,6 +294,25 @@ class MainActivity : AppCompatActivity(), LocationListener, SensorEventListener 
             }
         }
         return true
+    }
+
+    override fun onCompassHeading(heading: Float) {
+        if (DEBUG) {
+            val bearingTextView = findViewById<TextView>(R.id.bearingTextView)
+            bearingTextView.visibility = View.VISIBLE
+            bearingTextView.text = "Compass bearing: " + heading
+        }
+        Log.d(TAG, "onCompassHeading heading: " + heading)
+
+        if (bearingToDestination != null) {
+            // TODO: degree is to the magnetic north
+            val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
+            val turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
+            arrowImageView.setRotation(turnDegrees)
+            Log.d(TAG, "rotate image: " + turnDegrees)
+            //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
+            //Log.d(TAG, "rotate degree: " + degree)
+        }
     }
 
 }

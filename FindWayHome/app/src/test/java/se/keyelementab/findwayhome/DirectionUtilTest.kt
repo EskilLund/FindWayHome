@@ -1,19 +1,18 @@
 package se.keyelementab.findwayhome
 
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class DirectionManagerTest {
+class DirectionUtilTest {
     private val floatDelta = 1.0f
-    private val directionManager by lazy { DirectionManager() }
+    private val directionUtil = DirectionUtil()
 
     @Test
     fun facingWestDestinationNorth() {
         val bearingToDestinationNorth = 0f // ranging from -180 to 180
         val bearingCompassFacingWest = 270f // ranging from 0 to 360
 
-        assertEquals(90f, directionManager.degreesToTurnImage(bearingToDestinationNorth,
+        assertEquals(90f, directionUtil.degreesToTurnImage(bearingToDestinationNorth,
             bearingCompassFacingWest), floatDelta)
     }
 
@@ -22,7 +21,7 @@ class DirectionManagerTest {
         val bearingToDestinationNorth = 0f // ranging from -180 to 180
         val bearingCompassFacingNorth = 0f // ranging from 0 to 360
 
-        assertEquals(0f, directionManager.degreesToTurnImage(bearingToDestinationNorth,
+        assertEquals(0f, directionUtil.degreesToTurnImage(bearingToDestinationNorth,
             bearingCompassFacingNorth), floatDelta)
     }
 
@@ -31,7 +30,7 @@ class DirectionManagerTest {
         val bearingToDestinationSouth = 180f // ranging from -180 to 180
         val bearingCompassFacingNorth = 0f // ranging from 0 to 360
 
-        assertEquals(180f, directionManager.degreesToTurnImage(bearingToDestinationSouth,
+        assertEquals(180f, directionUtil.degreesToTurnImage(bearingToDestinationSouth,
             bearingCompassFacingNorth), floatDelta)
     }
 }
