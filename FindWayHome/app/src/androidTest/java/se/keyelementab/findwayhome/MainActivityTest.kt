@@ -5,20 +5,17 @@ import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Assert.*
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Instrumented test, testing {@link MainActivity}.
  */
 @RunWith(AndroidJUnit4::class)
-class InstrumentedTest {
+class MainActivityTest {
     private lateinit var appContext : Context
 
 //    @get:Rule
@@ -34,8 +31,12 @@ class InstrumentedTest {
     @Test
     fun testFabAbout() {
         val scenario = launchActivity<MainActivity>()
-        scenario.onActivity { activity ->
-            onView(withId(R.id.fab)).perform(click())
-        }
+        //scenario.moveToState(Lifecycle.State.CREATED)
+      //  scenario.onActivity { activity ->
+        onView(withId(R.id.fab)).perform(click())
+        onView(withId(R.id.fabAbout)).perform(click())
+        onView(withId(R.id.continueButton)).perform(click())
+
+        //  }
     }
 }
