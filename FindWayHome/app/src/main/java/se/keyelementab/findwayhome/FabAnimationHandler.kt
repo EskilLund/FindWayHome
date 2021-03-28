@@ -10,6 +10,7 @@ class FabAnimationHandler(val activity: Activity) {
     public interface ClickListener {
         fun onAboutClicked()
         fun onSetDestinationClicked()
+        fun onFabOpened()
     }
 
     private lateinit var fab: FloatingActionButton
@@ -18,6 +19,8 @@ class FabAnimationHandler(val activity: Activity) {
     private lateinit var fabSetDestinationLayout: LinearLayout
     private lateinit var fabAbout: FloatingActionButton
     private lateinit var fabSetDestination: FloatingActionButton
+
+    public var isOpen = false
 
     public fun enableFab(clickListener: ClickListener) {
         fab = activity.findViewById<FloatingActionButton>(R.id.fab)
@@ -31,6 +34,7 @@ class FabAnimationHandler(val activity: Activity) {
         fab.setOnClickListener {
             if (View.GONE == fabBGLayout.visibility) {
                 showFABMenu()
+                clickListener.onFabOpened()
             } else {
                 closeFABMenu()
             }
@@ -59,7 +63,6 @@ class FabAnimationHandler(val activity: Activity) {
         closeFABMenu()
     }
 
-
     private fun showFABMenu() {
         fabAboutLayout.visibility = View.VISIBLE
         fabSetDestinationLayout.visibility = View.VISIBLE
@@ -67,6 +70,8 @@ class FabAnimationHandler(val activity: Activity) {
         fab.animate().rotationBy(180F)
         fabAboutLayout.animate().translationY(-activity.resources.getDimension(R.dimen.standard_75))
         fabSetDestinationLayout.animate().translationY(-activity.resources.getDimension(R.dimen.standard_120))
+        isOpen = true
+
     }
 
     private fun closeFABMenu() {
@@ -86,7 +91,7 @@ class FabAnimationHandler(val activity: Activity) {
                     override fun onAnimationCancel(animator: Animator) {}
                     override fun onAnimationRepeat(animator: Animator) {}
                 })
-
+        isOpen = false
     }
 
 

@@ -1,5 +1,10 @@
 package se.keyelementab.findwayhome
 
+import android.content.Context
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.roundToInt
+
 class DirectionUtil {
     private val TAG = "DirectionUtil"
 
@@ -25,5 +30,14 @@ class DirectionUtil {
         }
 
         return degreesToTurn
+    }
+
+    fun getDistanceString(meters : Float, context : Context) : String {
+        return if (meters >= 1000f) {
+            String.format(context.getString(R.string.distance_kilometers),
+                "%.1f".format(meters / 1000f))
+        } else {
+            String.format(context.getString(R.string.distance_meters), meters.roundToInt())
+        }
     }
 }

@@ -7,5 +7,7 @@
     <dimen name="standard_120">120dp</dimen>
     <dimen name="standard_165">165dp</dimen>
 
-    <dimen name="fabTextSize">20sp</dimen>
+    <dimen name="fabTextSize">24sp</dimen>
+    <dimen name="distanceTextSize">24sp</dimen>
+
 </resources>

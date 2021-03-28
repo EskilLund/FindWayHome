@@ -21,7 +21,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
-    private val DEBUG = true
+    private val DEBUG = false
 
     private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -81,6 +81,11 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                     firstReceivedPositionIsDestination = true
                     startGetLocation()
                 }
+            }
+
+            override fun onFabOpened() {
+                val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
+                distanceTextView.visibility = View.INVISIBLE
             }
         }
 
@@ -208,6 +213,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         if (sharedPrefManager.isDestinationSet(this)) {
             val destination = Location(LocationManager.GPS_PROVIDER)
+            // TODO: possibly replace getLatitude/getLongitude with getLocation
             destination.latitude = sharedPrefManager.getLatitude(this)
             destination.longitude = sharedPrefManager.getLongitude(this)
             bearingToDestination = location.bearingTo(destination)
@@ -215,7 +221,13 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
             Log.d(TAG, "distance: " + location.distanceTo(destination))
 
-
+            val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
+            distanceTextView.text = directionUtil.getDistanceString(location.distanceTo(destination), this)
+            distanceTextView.visibility = if (fabAnimationHandler.isOpen) {
+                View.INVISIBLE
+            } else {
+                View.VISIBLE
+            }
 
 //            val locationNewYork = Location(LocationManager.GPS_PROVIDER)
 //            locationNewYork.latitude = 40.730610

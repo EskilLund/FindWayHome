@@ -25,7 +25,7 @@ class MainActivityTest {
     @Before
     fun setup() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        appContext = InstrumentationRegistry.getInstrumentation().targetContext
     }
 
     @Test
