@@ -16,17 +16,15 @@
     <string name="set_destination_yes">Yes</string>
     <string name="set_destination_later">Later</string>
 
-    <string name="about_mail_text">%1$s is a very simple and easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home, at your camp site or at your parked car), choose \"Set current location\" and the arrow will always point to that destination.</string>
+    <string name="about_general_header_text">General</string>
+    <string name="about_general_body_text">%1$s is a very easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home, at your camp site or at your parked car), choose \"Set current location\" and the arrow will always point to that destination.</string>
     <string name="about_privacy_header_text">Privacy</string>
-    <string name="about_privacy_body_text">This app does not store your location anywhere else but locally on your device. If you clear the apps data or delete the app, your set destination is gone. Crash data can however be uploaded to help in improving the app.</string>
+    <string name="about_privacy_body_text">This app does not store your location anywhere else but locally on your device. If you clear the apps data or delete the app, your set destination is gone. E.g. crash data can however be uploaded to help in improving the app.</string>
     <string name="about_version_info_header_text">Version Info</string>
     <string name="about_version_info_body_text">Version 0.1</string>
-
 
     <string name="okay_text">OK</string>
 
     <string name="distance_meters">Distance: %1$s meters</string>
     <string name="distance_kilometers">Distance: %1$s kilometers</string>
-
-
 </resources>

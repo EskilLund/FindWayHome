@@ -149,8 +149,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.about)
 
-        val headerText = dialog.findViewById(R.id.mainTextView) as TextView
-        headerText.text = String.format(getString(R.string.about_mail_text), getString(getApplicationInfo().labelRes))
+        val generalBodyText = dialog.findViewById(R.id.generalBodyTextView) as TextView
+        generalBodyText.text = String.format(getString(R.string.about_general_body_text), getString(getApplicationInfo().labelRes))
 
         val okayButton = dialog.findViewById(R.id.okayButton) as Button
         okayButton.setOnClickListener {

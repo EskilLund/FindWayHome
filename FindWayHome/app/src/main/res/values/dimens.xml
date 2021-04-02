@@ -8,5 +8,6 @@
     <dimen name="fabTextSize">24sp</dimen>
     <dimen name="distanceTextSize">24sp</dimen>
 
+    <dimen name="dialogHeaderTextSize">20sp</dimen>
     <dimen name="dialogTextSize">18sp</dimen>
 </resources>
