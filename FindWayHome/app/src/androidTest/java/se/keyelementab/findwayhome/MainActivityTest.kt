@@ -35,7 +35,7 @@ class MainActivityTest {
       //  scenario.onActivity { activity ->
         onView(withId(R.id.fab)).perform(click())
         onView(withId(R.id.fabAbout)).perform(click())
-        onView(withId(R.id.continueButton)).perform(click())
+        onView(withId(R.id.okayButton)).perform(click())
 
         //  }
     }

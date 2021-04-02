@@ -68,7 +68,7 @@ class FabAnimationHandler(val activity: Activity) {
         fabSetDestinationLayout.visibility = View.VISIBLE
         fabBGLayout.visibility = View.VISIBLE
         fab.animate().rotationBy(180F)
-        fabAboutLayout.animate().translationY(-activity.resources.getDimension(R.dimen.standard_75))
+        fabAboutLayout.animate().translationY(-activity.resources.getDimension(R.dimen.standard_60))
         fabSetDestinationLayout.animate().translationY(-activity.resources.getDimension(R.dimen.standard_120))
         isOpen = true
 

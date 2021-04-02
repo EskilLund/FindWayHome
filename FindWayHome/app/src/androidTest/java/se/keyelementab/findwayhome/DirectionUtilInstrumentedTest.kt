@@ -2,13 +2,11 @@ package se.keyelementab.findwayhome
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-//import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class DirectionUtilInstrumentedTest {
-    private val floatDelta = 1.0f
     private lateinit var appContext : Context
     private val directionUtil = DirectionUtil()
 

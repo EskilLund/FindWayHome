@@ -119,8 +119,12 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     fun presentDisclaimerDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.disclaimer)
+
+        val disclaimerHeaderTextView = dialog.findViewById(R.id.disclaimerHeaderTextView) as TextView
+        disclaimerHeaderTextView.text = String.format(getString(R.string.disclaimer_header_text), getString(getApplicationInfo().labelRes))
+
         val checkbox = dialog.findViewById(R.id.checkBoxAgree) as CheckBox
-        val continueButton = dialog.findViewById(R.id.continueButton) as Button
+        val continueButton = dialog.findViewById(R.id.okayButton) as Button
         val cancelButton = dialog.findViewById(R.id.cancelButton) as Button
 
         checkbox.setOnClickListener {
@@ -144,8 +148,12 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     fun presentAboutDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.about)
-        val continueButton = dialog.findViewById(R.id.continueButton) as Button
-        continueButton.setOnClickListener {
+
+        val headerText = dialog.findViewById(R.id.mainTextView) as TextView
+        headerText.text = String.format(getString(R.string.about_mail_text), getString(getApplicationInfo().labelRes))
+
+        val okayButton = dialog.findViewById(R.id.okayButton) as Button
+        okayButton.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()

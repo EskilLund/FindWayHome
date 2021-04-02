@@ -5,8 +5,8 @@
 
     <string name="permissions_are_mandatory">Permission Denied and is really needed TODO</string>
 
-    <string name="disclaimer">Welcome to the FindWayHome app, an easy-to-use navigation app that points you to the destination of your choice.\nBut please be aware that this app just points you in the direction of your destination, it does not necessarily point you in the safest or always accessible way. Always be aware of your surroundings and mind your safety. You are using this app at your own risk and responsibility. Be safe and enjoy the app.</string>
-    <string name="i_have_read_terms">I have read and understood these terms.</string>
+    <string name="disclaimer_header_text">Welcome to the %1$s app, an easy-to-use navigation app that points you to the destination of your choice.\nBut please be aware that this app just points you in the direction of your destination, it does not necessarily point you in the safest or always accessible way. Always be aware of your surroundings and mind your safety. You are using this app at your own risk and responsibility. Be safe and enjoy the app.</string>
+    <string name="i_understand">I understood that I am using this app at my own risk</string>
     <string name="continue_text">Continue</string>
     <string name="cancel_text">Cancel</string>
 
@@ -16,7 +16,14 @@
     <string name="set_destination_yes">Yes</string>
     <string name="set_destination_later">Later</string>
 
-    <string name="about_text">FindWayHome is a very simple and easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home or at your camp site), choose \"Set current location\" and the arrow will always point to that destination.</string>
+    <string name="about_mail_text">%1$s is a very simple and easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home, at your camp site or at your parked car), choose \"Set current location\" and the arrow will always point to that destination.</string>
+    <string name="about_privacy_header_text">Privacy</string>
+    <string name="about_privacy_body_text">This app does not store your location anywhere else but locally on your device. If you clear the apps data or delete the app, your set destination is gone. Crash data can however be uploaded to help in improving the app.</string>
+    <string name="about_version_info_header_text">Version Info</string>
+    <string name="about_version_info_body_text">Version 0.1</string>
+
+
+    <string name="okay_text">OK</string>
 
     <string name="distance_meters">Distance: %1$s meters</string>
     <string name="distance_kilometers">Distance: %1$s kilometers</string>

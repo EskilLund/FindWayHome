@@ -7,33 +7,78 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/mainTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
         android:enabled="true"
-        android:text="@string/about_text"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/continueButton"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/dialogTextSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/privacyHeaderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/about_privacy_header_text"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/dialogTextSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainTextView" />
+
+    <TextView
+        android:id="@+id/privacyBodyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/about_privacy_body_text"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/dialogTextSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/privacyHeaderTextView" />
+
+    <TextView
+        android:id="@+id/versionInfoHeaderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/about_version_info_header_text"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/dialogTextSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/privacyBodyTextView" />
+
+    <TextView
+        android:id="@+id/versionInfoBodyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/about_version_info_body_text"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/dialogTextSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/versionInfoHeaderTextView" />
+
     <Button
-        android:id="@+id/continueButton"
+        android:id="@+id/okayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:enabled="true"
-        android:text="@string/continue_text"
+        android:text="@string/okay_text"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/versionInfoBodyTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
