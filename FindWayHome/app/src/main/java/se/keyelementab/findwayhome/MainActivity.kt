@@ -3,7 +3,6 @@ package se.keyelementab.findwayhome
 //import android.R
 
 import android.Manifest
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.PackageManager
 import android.location.Location
@@ -66,6 +65,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     override fun onResume() {
         super.onResume()
         val context = this
+        val arrowImage = findViewById<ImageView>(R.id.arrowImageView)
 
         val onItemClickInterface : FabAnimationHandler.ClickListener = object : FabAnimationHandler.ClickListener {
             override fun onAboutClicked() {
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         fabAnimationHandler.enableFab(onItemClickInterface)
 
         if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(this)) {
-            findViewById<ImageView>(R.id.arroyImageView).alpha = 0.4f
+            arrowImage.alpha = 0.2f
         }
 
         if (!sharedPrefManager.isDisclaimerAccepted(this)) {
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                 sharedPrefManager.setLongLat(this, location)
             }
             firstReceivedPositionIsDestination = false
-            findViewById<ImageView>(R.id.arroyImageView).alpha = 1.0f
+            findViewById<ImageView>(R.id.arrowImageView).alpha = 1.0f
             Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()
         }
 
@@ -312,7 +312,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         if (bearingToDestination != null) {
             // TODO: degree is to the magnetic north
-            val arrowImageView = findViewById<ImageView>(R.id.arroyImageView)
+            val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
             val turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
             Log.d(TAG, "onCompassHeading, animation previousImageDirection: " + previousImageDirection)
 

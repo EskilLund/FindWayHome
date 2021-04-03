@@ -28,6 +28,7 @@
         android:checked="false"
         android:text="@string/i_understand"
         android:textSize="@dimen/dialogTextSize"
+        android:buttonTint="@color/fabbuttonbackground"
         app:layout_constraintBottom_toTopOf="@+id/okayButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

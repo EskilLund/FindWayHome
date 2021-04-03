@@ -10,19 +10,19 @@
 
 
     <ImageView
-        android:id="@+id/arroyImageView"
-        android:layout_width="wrap_content"
+        android:id="@+id/arrowImageView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:paddingStart="25dp"
         android:paddingTop="25dp"
         android:paddingEnd="25dp"
+        android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/arrow_up_red_trans_back" />
+        app:srcCompat="@drawable/arrow_up_red_trans_back"/>
 
     <TextView
         android:id="@+id/latTextView"
@@ -185,7 +185,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/arroyImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/arrowImageView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
