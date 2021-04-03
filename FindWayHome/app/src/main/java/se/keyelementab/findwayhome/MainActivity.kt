@@ -103,25 +103,29 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     fun presentSetDestinationNowDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(R.string.set_destination_now_question)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.set_location_now_dialog)
 
-        builder.setPositiveButton(R.string.set_destination_yes) { _, _ ->
+        val yesButton = dialog.findViewById(R.id.yesButton) as Button
+        yesButton.setOnClickListener {
             firstReceivedPositionIsDestination = true
             startGetLocation()
+            dialog.dismiss()
         }
-
-        builder.setNegativeButton(R.string.set_destination_later) { _, _ ->
+        val laterButton = dialog.findViewById(R.id.laterButton) as Button
+        laterButton.setOnClickListener {
+            dialog.dismiss()
         }
-        builder.show()
+        dialog.show()
     }
 
     fun presentDisclaimerDialog() {
         val dialog = Dialog(this)
-        dialog.setContentView(R.layout.disclaimer)
+        dialog.setContentView(R.layout.disclaimer_dialog)
 
         val disclaimerHeaderTextView = dialog.findViewById(R.id.disclaimerHeaderTextView) as TextView
-        disclaimerHeaderTextView.text = String.format(getString(R.string.disclaimer_header_text), getString(getApplicationInfo().labelRes))
+        disclaimerHeaderTextView.text = String.format(getString(R.string.disclaimer_header_text),
+                getString(R.string.app_name))
 
         val checkbox = dialog.findViewById(R.id.checkBoxAgree) as CheckBox
         val continueButton = dialog.findViewById(R.id.okayButton) as Button
@@ -147,10 +151,10 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
     fun presentAboutDialog() {
         val dialog = Dialog(this)
-        dialog.setContentView(R.layout.about)
+        dialog.setContentView(R.layout.about_dialog)
 
         val generalBodyText = dialog.findViewById(R.id.generalBodyTextView) as TextView
-        generalBodyText.text = String.format(getString(R.string.about_general_body_text), getString(getApplicationInfo().labelRes))
+        generalBodyText.text = String.format(getString(R.string.about_general_body_text), getString(R.string.app_name))
 
         val okayButton = dialog.findViewById(R.id.okayButton) as Button
         okayButton.setOnClickListener {
