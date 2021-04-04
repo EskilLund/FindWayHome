@@ -8,10 +8,10 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "se.keyelementab.findwayhome"
+        applicationId "se.eskil.findwayhome"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1
+        versionCode 1 // 1000 * Major + Minor
         versionName "0.1" // remember to update about_version_info_body_text
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

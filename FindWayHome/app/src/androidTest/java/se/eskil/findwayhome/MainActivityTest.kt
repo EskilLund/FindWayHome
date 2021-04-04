@@ -1,4 +1,4 @@
-package se.keyelementab.findwayhome
+package se.eskil.findwayhome
 
 import android.content.Context
 import androidx.test.core.app.launchActivity

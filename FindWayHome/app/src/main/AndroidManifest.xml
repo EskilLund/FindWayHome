@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="se.keyelementab.findwayhome">
+    package="se.eskil.findwayhome">
     <!-- To request foreground location access, declare one of these permissions. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -19,7 +19,7 @@
         android:theme="@style/Theme.FindWayHome">
         <activity
             android:screenOrientation="portrait"
-            android:name=".MainActivity"
+            android:name="se.eskil.findwayhome.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.FindWayHome.NoActionBar">
             <intent-filter>

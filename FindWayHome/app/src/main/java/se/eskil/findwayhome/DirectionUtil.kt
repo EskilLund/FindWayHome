@@ -1,8 +1,6 @@
-package se.keyelementab.findwayhome
+package se.eskil.findwayhome
 
 import android.content.Context
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 class DirectionUtil {
