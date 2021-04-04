@@ -1,7 +1,5 @@
 package se.eskil.findwayhome
 
-//import android.R
-
 import android.Manifest
 import android.app.Dialog
 import android.content.pm.PackageManager
