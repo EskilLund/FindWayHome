@@ -24,7 +24,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
-    private val DEBUG = false
+    private val DEBUG = true
 
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -184,10 +184,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     override fun onPause() {
-        super.onPause()
         fabAnimationHandler.disableFab()
-
         stopGetLocation()
+        super.onPause()
     }
 
     private fun startGetLocation() {
@@ -335,11 +334,20 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         if (bearingToDestination != null) {
             // TODO: degree is to the magnetic north
             val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
-            val turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-            Log.d(
-                TAG,
-                "onCompassHeading, animation previousImageDirection: " + previousImageDirection
-            )
+            var turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
+//            var turnDegrees = 358.0f //directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
+//            previousImageDirection = 3.0f
+//            var turnDegrees = 3.0f //directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
+//            previousImageDirection = 358.0f
+            Log.d(TAG, "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees)
+
+            if (previousImageDirection >= 270 && turnDegrees <= 90) {
+                // make the animation go clockwise and not go the longer way counterclockwise
+                turnDegrees += 360.0f
+            } else if (turnDegrees >= 270 && previousImageDirection < 90) {
+                // make the animation go counterclockwise and not go the longer way clockwise
+                previousImageDirection += 360.0f
+            }
 
             val rotate = RotateAnimation(
                 previousImageDirection,
@@ -356,7 +364,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             previousImageDirection = turnDegrees
             //arrowImageView.setRotation(turnDegrees)
 
-            Log.d(TAG, "rotate image: " + turnDegrees)
+//            arrowImageView.animate().rotation(turnDegrees).setDuration((compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong()).start();
+
             //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
             //Log.d(TAG, "rotate degree: " + degree)
         }
