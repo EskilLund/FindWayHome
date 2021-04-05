@@ -24,7 +24,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
-    private val DEBUG = true
+    private val DEBUG = false
 
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,

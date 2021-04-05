@@ -42,11 +42,12 @@ class GPSManager : LocationListener {
     @SuppressLint("MissingPermission") // the permission is checked before using checkPermissions
     fun startGPSManager() {
         Log.d(TAG, "startGPSManager")
-        if (managerStarted) {
-            Log.d(TAG, "startGPSManager already started")
-        }
-
         synchronized(this) {
+            if (managerStarted) {
+                Log.d(TAG, "startGPSManager already started")
+                return
+            }
+
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     LOCATION_UPDATE_TIME_MS,
@@ -57,11 +58,12 @@ class GPSManager : LocationListener {
 
     fun stopGPSManager() {
         Log.d(TAG, "stopGPSManager")
-        if (!managerStarted) {
-            Log.d(TAG, "stopGPSManager already stopped")
-        }
-
         synchronized(this) {
+            if (!managerStarted) {
+                Log.d(TAG, "stopGPSManager already stopped")
+                return
+            }
+
             locationManager.removeUpdates(this)
         }
     }

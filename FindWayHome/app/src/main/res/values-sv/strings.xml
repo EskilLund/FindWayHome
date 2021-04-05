@@ -29,7 +29,7 @@
     <string name="about_privacy_header_text">Integritet</string>
     <string name="about_privacy_body_text">Denna appen sparar inte ditt satta mål någonstans utom lokalt på din enhet. Det laddas ALDRIG upp någonstans. Om du rensar appens data eller tar bort appen så försvinner ditt satta mål. Emellertid, precis som andra appar på Google Play så kan kraschar och anonym användningsdata laddas upp för att hjälpa till att förbättra appen.</string>
     <string name="about_version_info_header_text">Versionsinformation</string>
-    <string name="about_version_info_body_text">Version 0.2</string>
+    <string name="about_version_info_body_text">Version 0.3</string>
 
     <string name="okay_text">OK</string>
 
