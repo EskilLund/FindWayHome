@@ -1,3 +1,9 @@
+/**
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+ */
 package se.eskil.findwayhome
 
 import android.Manifest
@@ -21,8 +27,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     private val DEBUG = false
 
     private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
     private val fabAnimationHandler = FabAnimationHandler(this)
@@ -89,7 +95,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         fabAnimationHandler.enableFab(onItemClickInterface)
 
-        if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(this)) {
+        if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(
+                this
+            )) {
             arrowImage.alpha = 0.2f
         }
 
@@ -122,8 +130,10 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         dialog.setContentView(R.layout.disclaimer_dialog)
 
         val disclaimerHeaderTextView = dialog.findViewById(R.id.disclaimerHeaderTextView) as TextView
-        disclaimerHeaderTextView.text = String.format(getString(R.string.disclaimer_header_text),
-                getString(R.string.app_name))
+        disclaimerHeaderTextView.text = String.format(
+            getString(R.string.disclaimer_header_text),
+            getString(R.string.app_name)
+        )
 
         val checkbox = dialog.findViewById(R.id.checkBoxAgree) as CheckBox
         val continueButton = dialog.findViewById(R.id.okayButton) as Button
@@ -151,13 +161,25 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.about_dialog)
 
+        // the location manager causes a crash if listener is in background (?)
+        stopGetLocation()
+
         val generalBodyText = dialog.findViewById(R.id.generalBodyTextView) as TextView
-        generalBodyText.text = String.format(getString(R.string.about_general_body_text), getString(R.string.app_name))
+        generalBodyText.text = String.format(
+            getString(R.string.about_general_body_text), getString(
+                R.string.app_name
+            )
+        )
 
         val okayButton = dialog.findViewById(R.id.okayButton) as Button
         okayButton.setOnClickListener {
             dialog.dismiss()
+            startGetLocation()
         }
+        dialog.setOnCancelListener {
+            startGetLocation()
+        }
+
         dialog.show()
     }
 
@@ -174,9 +196,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
             ActivityCompat.requestPermissions(
-                    this,
-                    REQUIRED_PERMISSIONS,
-                    LOCATION_PERMISSION_CODE
+                this,
+                REQUIRED_PERMISSIONS,
+                LOCATION_PERMISSION_CODE
             )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
@@ -193,8 +215,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
     override fun onGPSUpdate(location: Location) {
         Log.d(
-                TAG,
-                "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
+            TAG,
+            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
         )
 
         if (DEBUG) {
@@ -232,7 +254,10 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             Log.d(TAG, "distance: " + location.distanceTo(destination))
 
             val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
-            distanceTextView.text = directionUtil.getDistanceString(location.distanceTo(destination), this)
+            distanceTextView.text = directionUtil.getDistanceString(
+                location.distanceTo(destination),
+                this
+            )
             distanceTextView.visibility = if (fabAnimationHandler.isOpen) {
                 View.INVISIBLE
             } else {
@@ -249,9 +274,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == LOCATION_PERMISSION_CODE) {
@@ -276,15 +301,14 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     fun presentPermissionsAreMandatoryDialog() {
-        // TODO: use AlertDialog, and better text
-        Toast.makeText(this, R.string.permissions_are_mandatory, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.permissions_are_mandatory, Toast.LENGTH_LONG).show()
     }
 
     fun checkPermissions() : Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             val granted = ActivityCompat.checkSelfPermission(
-                    this,
-                    permission
+                this,
+                permission
             ) == PackageManager.PERMISSION_GRANTED
             if (granted) {
                 //TODO: simplify, granted ? "" : "not"
@@ -312,9 +336,19 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             // TODO: degree is to the magnetic north
             val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
             val turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-            Log.d(TAG, "onCompassHeading, animation previousImageDirection: " + previousImageDirection)
+            Log.d(
+                TAG,
+                "onCompassHeading, animation previousImageDirection: " + previousImageDirection
+            )
 
-            val rotate = RotateAnimation(previousImageDirection, turnDegrees, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            val rotate = RotateAnimation(
+                previousImageDirection,
+                turnDegrees,
+                Animation.RELATIVE_TO_SELF,
+                0.5f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f
+            )
             rotate.duration = (compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong() // duration = 80% of time to next update
             rotate.interpolator = LinearInterpolator()
             rotate.setFillAfter(true)

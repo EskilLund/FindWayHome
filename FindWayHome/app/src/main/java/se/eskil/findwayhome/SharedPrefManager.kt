@@ -1,9 +1,14 @@
+/**
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+ */
 package se.eskil.findwayhome
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
-
 
 class SharedPrefManager {
     private val KEY_LATITUDE = "destination_latitude"

@@ -1,3 +1,9 @@
+/**
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+ */
 package se.eskil.findwayhome
 
 import android.annotation.SuppressLint
@@ -27,7 +33,9 @@ class GPSManager : LocationListener {
     }
 
     constructor(context : Context, gpsListener: GPSListener) {
-        this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        synchronized(this) {
+            this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        }
         this.gpsListener = gpsListener
     }
 
@@ -38,12 +46,13 @@ class GPSManager : LocationListener {
             Log.d(TAG, "startGPSManager already started")
         }
 
-        locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            LOCATION_UPDATE_TIME_MS,
-            LOCATION_UPDATE_DISTANCE_METERS,
-            this
-        )
+        synchronized(this) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    LOCATION_UPDATE_TIME_MS,
+                    LOCATION_UPDATE_DISTANCE_METERS,
+                    this)
+        }
     }
 
     fun stopGPSManager() {
@@ -52,12 +61,12 @@ class GPSManager : LocationListener {
             Log.d(TAG, "stopGPSManager already stopped")
         }
 
-        locationManager.removeUpdates(this)
+        synchronized(this) {
+            locationManager.removeUpdates(this)
+        }
     }
 
     override fun onLocationChanged(location: Location) {
         gpsListener.onGPSUpdate(location)
     }
-
-
 }

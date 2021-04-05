@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+  -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">FindWayHome</string>
+    <string name="action_set_current_location">Sätt målet till nuvarande position</string>
+    <string name="action_about">Om appen</string>
+
+    <string name="permissions_are_mandatory">Detta är en navigationsapp. När appen inte tillåts access till GPS eller compass så är appen kan inte appen navigera.</string>
+
+    <string name="disclaimer_header_text">Välkommen till %1$s appen, en lättanvänd navigationsapp som pekar dig till din valda destination.\nVänligen var medveten om att denna appen bara pekar dig i riktning mot din destination, den pekar dig inte nödvändigtvis i den säkraste eller ens framkomliga vägen. Var alltid medveten om din omgivning och prioritera din säkerhet. Du använder denna appen på egen risk och på eget ansvar. Var säker och trevlig användning av appen.</string>
+    <string name="i_understand">Jag förstår att jag använder appen på egen risk</string>
+    <string name="continue_text">Fortsätt</string>
+    <string name="cancel_text">Avbryt</string>
+
+    <string name="destination_set">Målet har satts till din nuvarande position.</string>
+
+    <string name="set_destination_now_question">Vill du sätta målet till din nuvarande position nu?</string>
+    <string name="set_destination_yes">Ja</string>
+    <string name="set_destination_later">Senare</string>
+
+    <string name="about_general_header_text">Generellt</string>
+    <string name="about_general_body_text">%1$s är en lättanvänd navigationsapp som helt enkelt pekar en pil till ditt valda mål. När du är på ditt önskade mål (t.ex. hemma, på din kampingplats eller vid din parkerade bil), välj \"Sätt målet till nuvarande position\". Pilen kommer hela tiden att peka till ditt valda mål.</string>
+    <string name="about_privacy_header_text">Integritet</string>
+    <string name="about_privacy_body_text">Denna appen sparar inte ditt satta mål någonstans utom lokalt på din enhet. Det laddas ALDRIG upp någonstans. Om du rensar appens data eller tar bort appen så försvinner ditt satta mål. Emellertid, precis som andra appar på Google Play så kan kraschar och anonym användningsdata laddas upp för att hjälpa till att förbättra appen.</string>
+    <string name="about_version_info_header_text">Versionsinformation</string>
+    <string name="about_version_info_body_text">Version 0.2</string>
+
+    <string name="okay_text">OK</string>
+
+    <string name="distance_meters">Avstånd: %1$s meter</string>
+    <string name="distance_kilometers">Avstånd: %1$s kilometer</string>
+</resources>
