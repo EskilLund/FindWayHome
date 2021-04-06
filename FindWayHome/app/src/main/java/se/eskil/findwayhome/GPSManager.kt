@@ -11,6 +11,7 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Bundle
 import android.util.Log
 
 /**
@@ -22,8 +23,8 @@ class GPSManager : LocationListener {
     private val LOCATION_UPDATE_TIME_MS = 5000L
     private val LOCATION_UPDATE_DISTANCE_METERS = 0f
 
-    private val locationManager : LocationManager
-    private val gpsListener: GPSListener
+    private var locationManager : LocationManager? = null
+    private var gpsListener: GPSListener? = null
 
     private var managerStarted = false
 
@@ -32,15 +33,8 @@ class GPSManager : LocationListener {
         fun onGPSUpdate(location: Location)
     }
 
-    constructor(context : Context, gpsListener: GPSListener) {
-        synchronized(this) {
-            this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        }
-        this.gpsListener = gpsListener
-    }
-
     @SuppressLint("MissingPermission") // the permission is checked before using checkPermissions
-    fun startGPSManager() {
+    fun startGPSManager(context : Context, gpsListener: GPSListener) {
         Log.d(TAG, "startGPSManager")
         synchronized(this) {
             if (managerStarted) {
@@ -48,7 +42,10 @@ class GPSManager : LocationListener {
                 return
             }
 
-            locationManager.requestLocationUpdates(
+            this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            this.gpsListener = gpsListener
+
+            this.locationManager!!.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     LOCATION_UPDATE_TIME_MS,
                     LOCATION_UPDATE_DISTANCE_METERS,
@@ -64,11 +61,20 @@ class GPSManager : LocationListener {
                 return
             }
 
-            locationManager.removeUpdates(this)
+            locationManager!!.removeUpdates(this)
+            gpsListener = null
         }
     }
 
     override fun onLocationChanged(location: Location) {
-        gpsListener.onGPSUpdate(location)
+        synchronized(this) {
+            if (gpsListener != null) {
+                gpsListener!!.onGPSUpdate(location)
+            }
+        }
+    }
+
+    override fun onStatusChanged(provider : String, status : Int, extras : Bundle) {
+        // ignoring
     }
 }

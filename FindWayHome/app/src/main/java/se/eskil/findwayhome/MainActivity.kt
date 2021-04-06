@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         setContentView(R.layout.activity_main)
 
         compassManager = CompassManager(this, this)
-        gpsManager = GPSManager(this, this)
+        gpsManager = GPSManager()
     }
 
     override fun onResume() {
@@ -203,7 +203,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             Log.d(TAG, "startGetLocation requestLocationUpdates")
 
             compassManager.startCompassManager()
-            gpsManager.startGPSManager()
+            gpsManager.startGPSManager(this, this)
         }
     }
 
