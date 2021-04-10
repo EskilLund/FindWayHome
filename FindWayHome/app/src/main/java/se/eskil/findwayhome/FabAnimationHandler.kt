@@ -48,17 +48,10 @@ class FabAnimationHandler(val activity: Activity) {
 
         fabBGLayout.setOnClickListener { closeFABMenu() }
 
-        fabAboutLayout.setOnClickListener {
-            clickListener.onAboutClicked()
-            closeFABMenu()
-        }
         fabAbout.setOnClickListener {
             clickListener.onAboutClicked()
             closeFABMenu()}
-        fabSetDestinationLayout.setOnClickListener {
-            clickListener.onSetDestinationClicked()
-            closeFABMenu()
-        }
+
         fabSetDestination.setOnClickListener {
             clickListener.onSetDestinationClicked()
             closeFABMenu()

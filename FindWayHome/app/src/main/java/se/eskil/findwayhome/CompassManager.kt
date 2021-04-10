@@ -36,12 +36,10 @@ class CompassManager : SensorEventListener {
     private var compassListener: CompassListener? = null
     private var managerStarted = false
 
-
-
     interface CompassListener {
         fun onCompassHeading(heading: Float)
+        fun onCompassSensorsNotExisting()
     }
-
 
     fun startCompassManager(context: Context, compassListener: CompassListener) {
         Log.d(TAG, "startCompassManager")
@@ -54,6 +52,11 @@ class CompassManager : SensorEventListener {
             this.sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             this.gsensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             this.msensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+
+            if (this.gsensor == null || this.msensor == null) {
+                compassListener.onCompassSensorsNotExisting()
+                return
+            }
 
             this.compassListener = compassListener
 

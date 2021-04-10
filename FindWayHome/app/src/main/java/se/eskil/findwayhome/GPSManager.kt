@@ -31,6 +31,7 @@ class GPSManager : LocationListener {
 
     interface GPSListener {
         fun onGPSUpdate(location: Location)
+        fun onGPSSensorsNotExisting()
     }
 
     @SuppressLint("MissingPermission") // the permission is checked before using checkPermissions
@@ -43,6 +44,11 @@ class GPSManager : LocationListener {
             }
 
             this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (!this.locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                gpsListener.onGPSSensorsNotExisting()
+                return
+            }
+
             this.gpsListener = gpsListener
 
             this.locationManager!!.requestLocationUpdates(

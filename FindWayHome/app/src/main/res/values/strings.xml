@@ -16,7 +16,6 @@
     <string name="disclaimer_header_text">Welcome to the %1$s app, an easy-to-use navigation app that points you to the destination of your choice.\nBut please be aware that this app just points you in the direction of your destination, it does not necessarily point you in the safest or even accessible way. Always be aware of your surroundings and prioritize your safety. You are using this app at your own risk and responsibility. Be safe and enjoy the app.</string>
     <string name="i_understand">I understand that I am using this app at my own risk</string>
     <string name="continue_text">Continue</string>
-    <string name="cancel_text">Cancel</string>
 
     <string name="destination_set">The destination has successfully been set to your current location.</string>
 
@@ -29,10 +28,15 @@
     <string name="about_privacy_header_text">Privacy</string>
     <string name="about_privacy_body_text">This app does not store your saved destination anywhere else but locally on your device. It is NEVER uploaded anywhere. If you clear the apps data or delete the app, your set destination is gone. However, just like any other app found on Google Play, crashes and anonymous usage data can be uploaded to help in improving the app.</string>
     <string name="about_version_info_header_text">Version Info</string>
-    <string name="about_version_info_body_text">Version 0.8</string>
+    <string name="about_version_info_body_text">Version 0.9</string>
 
     <string name="okay_text">OK</string>
+    <string name="cancel_text">Cancel</string>
 
     <string name="distance_meters">Distance: %1$s meters</string>
     <string name="distance_kilometers">Distance: %1$s kilometers</string>
+
+    <string name="gps_is_disabled_text">GPS is disabled in your device. Would you like to enable it?</string>
+    <string name="goto_gps_settings_text">Goto GPS Settings</string>
+    <string name="compass_is_disabled_text">Compass sensor does\'t exist on your device.</string>
 </resources>

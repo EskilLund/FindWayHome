@@ -7,11 +7,15 @@
 package se.eskil.findwayhome
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -24,11 +28,11 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
-    private val DEBUG = true
+    private val DEBUG = false
 
     private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
     private val fabAnimationHandler = FabAnimationHandler(this)
@@ -96,8 +100,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         fabAnimationHandler.enableFab(onItemClickInterface)
 
         if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(
-                        this
-                )) {
+                this
+            )) {
             arrowImage.alpha = 0.2f
         }
 
@@ -131,8 +135,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         val disclaimerHeaderTextView = dialog.findViewById(R.id.disclaimerHeaderTextView) as TextView
         disclaimerHeaderTextView.text = String.format(
-                getString(R.string.disclaimer_header_text),
-                getString(R.string.app_name)
+            getString(R.string.disclaimer_header_text),
+            getString(R.string.app_name)
         )
 
         val checkbox = dialog.findViewById(R.id.checkBoxAgree) as CheckBox
@@ -166,9 +170,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         val generalBodyText = dialog.findViewById(R.id.generalBodyTextView) as TextView
         generalBodyText.text = String.format(
-                getString(R.string.about_general_body_text), getString(
+            getString(R.string.about_general_body_text), getString(
                 R.string.app_name
-        )
+            )
         )
 
         val okayButton = dialog.findViewById(R.id.okayButton) as Button
@@ -195,9 +199,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         if (!checkPermissions()) {
             Log.d(TAG, "startGetLocation requestPermissions")
             ActivityCompat.requestPermissions(
-                    this,
-                    REQUIRED_PERMISSIONS,
-                    LOCATION_PERMISSION_CODE
+                this,
+                REQUIRED_PERMISSIONS,
+                LOCATION_PERMISSION_CODE
             )
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
@@ -214,8 +218,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
     override fun onGPSUpdate(location: Location) {
         Log.d(
-                TAG,
-                "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
+            TAG,
+            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
         )
 
         if (DEBUG) {
@@ -254,8 +258,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
             val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
             distanceTextView.text = directionUtil.getDistanceString(
-                    location.distanceTo(destination),
-                    this
+                location.distanceTo(destination),
+                this
             )
             distanceTextView.visibility = if (fabAnimationHandler.isOpen) {
                 View.INVISIBLE
@@ -273,9 +277,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         Log.d(TAG, "onRequestPermissionsResult")
         if (requestCode == LOCATION_PERMISSION_CODE) {
@@ -306,15 +310,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
     fun checkPermissions() : Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             val granted = ActivityCompat.checkSelfPermission(
-                    this,
-                    permission
+                this,
+                permission
             ) == PackageManager.PERMISSION_GRANTED
-            if (granted) {
-                //TODO: simplify, granted ? "" : "not"
-                Log.d(TAG, "Permission " + permission + " granted")
-            } else {
-                Log.d(TAG, "Permission " + permission + " not granted")
-            }
 
             if (!granted) {
                 return false
@@ -339,7 +337,10 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 //            previousImageDirection = 3.0f
 //            var turnDegrees = 3.0f //directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
 //            previousImageDirection = 358.0f
-            Log.d(TAG, "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees)
+            Log.d(
+                TAG,
+                "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees
+            )
 
             if (previousImageDirection - turnDegrees > 180) {
                 // make the animation go clockwise and not go the longer way counterclockwise
@@ -351,12 +352,12 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
             runOnUiThread {
                 val rotate = RotateAnimation(
-                        previousImageDirection,
-                        turnDegrees,
-                        Animation.RELATIVE_TO_SELF,
-                        0.5f,
-                        Animation.RELATIVE_TO_SELF,
-                        0.5f
+                    previousImageDirection,
+                    turnDegrees,
+                    Animation.RELATIVE_TO_SELF,
+                    0.5f,
+                    Animation.RELATIVE_TO_SELF,
+                    0.5f
                 )
                 rotate.duration = (compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong() // duration = 80% of time to next update
                 rotate.interpolator = LinearInterpolator()
@@ -371,5 +372,32 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
             //Log.d(TAG, "rotate degree: " + degree)
         }
+    }
+
+    override fun onCompassSensorsNotExisting() {
+        val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        alertDialogBuilder.setMessage(R.string.compass_is_disabled_text)
+            .setCancelable(false)
+            .setPositiveButton(R.string.okay_text,
+                DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() })
+        val alert: AlertDialog = alertDialogBuilder.create()
+        alert.show()
+    }
+
+    override fun onGPSSensorsNotExisting() {
+        val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        alertDialogBuilder.setMessage(R.string.gps_is_disabled_text)
+            .setCancelable(false)
+            .setPositiveButton(R.string.goto_gps_settings_text,
+                DialogInterface.OnClickListener { _, _ ->
+                    val callGPSSettingIntent = Intent(
+                        Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                    )
+                    startActivity(callGPSSettingIntent)
+                })
+            .setNegativeButton(R.string.cancel_text,
+                DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() })
+        val alert: AlertDialog = alertDialogBuilder.create()
+        alert.show()
     }
 }
