@@ -341,32 +341,30 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 //            previousImageDirection = 358.0f
             Log.d(TAG, "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees)
 
-            if (previousImageDirection >= 270 && turnDegrees <= 90) {
+            if (previousImageDirection - turnDegrees > 180) {
                 // make the animation go clockwise and not go the longer way counterclockwise
                 turnDegrees += 360.0f
-            } else if (turnDegrees >= 270 && previousImageDirection < 90) {
+            } else if (turnDegrees - previousImageDirection > 180) {
                 // make the animation go counterclockwise and not go the longer way clockwise
                 previousImageDirection += 360.0f
             }
 
-//            runOnUiThread {
-//                adjustArrow(azimuth)
-//                adjustSotwLabel(azimuth)
-//            }
-            val rotate = RotateAnimation(
-                    previousImageDirection,
-                    turnDegrees,
-                    Animation.RELATIVE_TO_SELF,
-                    0.5f,
-                    Animation.RELATIVE_TO_SELF,
-                    0.5f
-            )
-            rotate.duration = (compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong() // duration = 80% of time to next update
-            rotate.interpolator = LinearInterpolator()
-            rotate.setFillAfter(true)
-            arrowImageView.startAnimation(rotate)
-            previousImageDirection = turnDegrees
-            //arrowImageView.setRotation(turnDegrees)
+            runOnUiThread {
+                val rotate = RotateAnimation(
+                        previousImageDirection,
+                        turnDegrees,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f
+                )
+                rotate.duration = (compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong() // duration = 80% of time to next update
+                rotate.interpolator = LinearInterpolator()
+                rotate.setFillAfter(true)
+                arrowImageView.startAnimation(rotate)
+                previousImageDirection = turnDegrees
+                //arrowImageView.setRotation(turnDegrees)
+            }
 
 //            arrowImageView.animate().rotation(turnDegrees).setDuration((compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong()).start();
 
