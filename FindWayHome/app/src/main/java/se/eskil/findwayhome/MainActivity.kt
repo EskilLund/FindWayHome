@@ -24,7 +24,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager.CompassListener {
     private val TAG = "MainActivity"
-    private val DEBUG = false
+    private val DEBUG = true
 
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        compassManager = CompassManager(this, this)
+        compassManager = CompassManager()
         gpsManager = GPSManager()
     }
 
@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         } else {
             Log.d(TAG, "startGetLocation requestLocationUpdates")
 
-            compassManager.startCompassManager()
+            compassManager.startCompassManager(this, this)
             gpsManager.startGPSManager(this, this)
         }
     }

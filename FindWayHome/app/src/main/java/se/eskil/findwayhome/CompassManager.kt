@@ -22,8 +22,8 @@ class CompassManager : SensorEventListener {
     public val COMPASS_UPDATE_DELAY_MS = 200
     private var latestCompassUpdateTimeMs : Long? = null
 
-    private var sensorManager : SensorManager
-    private var compassListener: CompassListener
+    private var sensorManager : SensorManager? = null
+    private var compassListener: CompassListener? = null
 
     private var managerStarted = false
 
@@ -32,30 +32,35 @@ class CompassManager : SensorEventListener {
         fun onCompassHeading(heading: Float)
     }
 
-    constructor(context : Context, compassListener: CompassListener) {
-        this.sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        this.compassListener = compassListener
-    }
 
-    fun startCompassManager() {
+    fun startCompassManager(context : Context, compassListener: CompassListener) {
         Log.d(TAG, "startCompassManager")
         if (managerStarted) {
             Log.d(TAG, "startCompassManager already started")
+            return
         }
 
-        sensorManager.registerListener(
-            this,
-            sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-            SensorManager.SENSOR_DELAY_UI)
+        synchronized(this) {
+            this.sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            this.compassListener = compassListener
+
+            sensorManager!!.registerListener(
+                this,
+                sensorManager!!.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_UI)
+            }
     }
 
     fun stopCompassManager() {
         Log.d(TAG, "stopGPSManager")
         if (!managerStarted) {
             Log.d(TAG, "stopGPSManager already stopped")
+            return
         }
-
-        sensorManager.unregisterListener(this)
+        synchronized(this) {
+            sensorManager!!.unregisterListener(this)
+            compassListener = null
+        }
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -69,7 +74,11 @@ class CompassManager : SensorEventListener {
 
         val degree = Math.round(event!!.values[0]).toFloat()
         Log.d(TAG, "onSensorChanged, bearing: " + degree)
-        compassListener.onCompassHeading(degree)
+        synchronized(this) {
+            if (compassListener != null) {
+                compassListener!!.onCompassHeading(degree)
+            }
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
