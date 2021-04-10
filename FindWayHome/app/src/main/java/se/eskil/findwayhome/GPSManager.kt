@@ -50,6 +50,8 @@ class GPSManager : LocationListener {
                     LOCATION_UPDATE_TIME_MS,
                     LOCATION_UPDATE_DISTANCE_METERS,
                     this)
+
+            managerStarted = true
         }
     }
 
@@ -63,6 +65,8 @@ class GPSManager : LocationListener {
 
             locationManager!!.removeUpdates(this)
             gpsListener = null
+
+            managerStarted = false
         }
     }
 
