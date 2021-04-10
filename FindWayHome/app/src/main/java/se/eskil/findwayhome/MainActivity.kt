@@ -222,6 +222,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
         )
 
+        compassManager.setLocation(location)
+
         if (DEBUG) {
             val latTextView = findViewById<TextView>(R.id.latTextView)
             val longTextView = findViewById<TextView>(R.id.longTextView)
@@ -330,13 +332,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         Log.d(TAG, "onCompassHeading heading: " + heading)
 
         if (bearingToDestination != null) {
-            // TODO: degree is to the magnetic north
             val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
             var turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-//            var turnDegrees = 358.0f //directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-//            previousImageDirection = 3.0f
-//            var turnDegrees = 3.0f //directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-//            previousImageDirection = 358.0f
             Log.d(
                 TAG,
                 "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees

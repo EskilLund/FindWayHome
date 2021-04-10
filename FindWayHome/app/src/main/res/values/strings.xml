@@ -28,7 +28,7 @@
     <string name="about_privacy_header_text">Privacy</string>
     <string name="about_privacy_body_text">This app does not store your saved destination anywhere else but locally on your device. It is NEVER uploaded anywhere. If you clear the apps data or delete the app, your set destination is gone. However, just like any other app found on Google Play, crashes and anonymous usage data can be uploaded to help in improving the app.</string>
     <string name="about_version_info_header_text">Version Info</string>
-    <string name="about_version_info_body_text">Version 0.9</string>
+    <string name="about_version_info_body_text">Version 0.10</string>
 
     <string name="okay_text">OK</string>
     <string name="cancel_text">Cancel</string>

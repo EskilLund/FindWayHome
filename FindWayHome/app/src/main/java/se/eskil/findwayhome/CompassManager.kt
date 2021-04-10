@@ -8,11 +8,10 @@
 package se.eskil.findwayhome
 
 import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
+import android.hardware.*
+import android.location.Location
 import android.util.Log
+
 
 /**
  * Handles the interaction with the compass sensor.
@@ -35,6 +34,8 @@ class CompassManager : SensorEventListener {
 
     private var compassListener: CompassListener? = null
     private var managerStarted = false
+
+    private var location: Location? = null
 
     interface CompassListener {
         fun onCompassHeading(heading: Float)
@@ -61,13 +62,15 @@ class CompassManager : SensorEventListener {
             this.compassListener = compassListener
 
             sensorManager!!.registerListener(
-                    this,
-                    gsensor,
-                    SensorManager.SENSOR_DELAY_UI)
+                this,
+                gsensor,
+                SensorManager.SENSOR_DELAY_UI
+            )
             sensorManager!!.registerListener(
-                    this,
-                    msensor,
-                    SensorManager.SENSOR_DELAY_UI)
+                this,
+                msensor,
+                SensorManager.SENSOR_DELAY_UI
+            )
 
             managerStarted = true
         }
@@ -84,6 +87,12 @@ class CompassManager : SensorEventListener {
             compassListener = null
 
             managerStarted = false
+        }
+    }
+
+    fun setLocation(location: Location) {
+        synchronized(this) {
+            this.location = location
         }
     }
 
@@ -128,7 +137,20 @@ class CompassManager : SensorEventListener {
                 SensorManager.getOrientation(R, orientation)
                 var azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat() // orientation
                 azimuth = (azimuth + azimuthFix + 360) % 360
-                Log.d(TAG, "onSensorChanged, bearing: " + azimuth)
+                Log.d(TAG, "onSensorChanged, bearing magnetic north: " + azimuth)
+
+                if (location != null) {
+                    // converts magnetic north to true north
+                    val geoField = GeomagneticField(
+                        location!!.getLatitude().toFloat(),
+                        location!!.getLongitude().toFloat(),
+                        location!!.getAltitude().toFloat(),
+                        System.currentTimeMillis()
+                    )
+                    Log.d(TAG, "Magnetic declination: " + geoField.declination)
+                    azimuth = (azimuth + geoField.declination) % 360
+                }
+
                 if (compassListener != null) {
                     compassListener!!.onCompassHeading(azimuth)
                 }

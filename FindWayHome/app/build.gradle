@@ -14,8 +14,8 @@ android {
         applicationId "se.eskil.findwayhome"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 9 // 1000 * Major + Minor
-        versionName "0.9" // remember to update about_version_info_body_text
+        versionCode 10 // 1000 * Major + Minor
+        versionName "0.10" // remember to update about_version_info_body_text
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,6 +50,9 @@ dependencies {
  //   androidTestImplementation 'androidx.test.ext.junit.rules:1.3.0'
     androidTestImplementation 'androidx.test:core-ktx:1.3.0'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.2'
+ //   androidTestImplementation "com.android.support.test:runner:1.0.2"
+ //   androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
+
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:26.8.0')
