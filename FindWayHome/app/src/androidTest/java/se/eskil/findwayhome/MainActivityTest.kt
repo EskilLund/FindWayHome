@@ -11,13 +11,17 @@ import android.content.Context
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 
 /**
@@ -27,13 +31,13 @@ import org.junit.runner.RunWith
 class MainActivityTest {
     private lateinit var appContext : Context
 
-//    /**
-//     * Rule to grant permission when needed.
-//     */
-//    @Rule @JvmField
-//    val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-//        android.Manifest.permission.ACCESS_FINE_LOCATION,
-//        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    /**
+     * Rule to grant permission when needed.
+     */
+    @Rule @JvmField
+    val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
 //    @get:Rule
 //    val rule = activityScenarioRule<MainActivity>()
@@ -63,9 +67,8 @@ class MainActivityTest {
         //scenario.moveToState(Lifecycle.State.CREATED)
         //  scenario.onActivity { activity ->
         onView(withId(R.id.fab)).perform(click())
-        onView(withId(R.id.fabAbout)).perform(click())
-        onView(withId(R.id.okayButton)).perform(click())
-
-        //  }
+        onView(withId(R.id.fabSetDestination)).perform(click())
+        sleep(7000)
+        onView(withId(R.id.distanceTextView)).check(matches(isDisplayed()))
     }
 }
