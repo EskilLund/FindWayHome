@@ -6,7 +6,6 @@
  */
 package se.eskil.findwayhome
 
-import android.Manifest
 import android.content.Context
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
