@@ -7,6 +7,7 @@
 package se.eskil.findwayhome
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -35,8 +36,8 @@ class MainActivityTest {
      */
     @Rule @JvmField
     val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
 //    @get:Rule
 //    val rule = activityScenarioRule<MainActivity>()
@@ -47,6 +48,26 @@ class MainActivityTest {
         // Context of the app under test.
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
     }
+
+    @Test
+    fun testFirstStart() {
+        // Clear everything in the SharedPreferences
+        // Clear everything in the SharedPreferences
+//        val sharedPreferences: SharedPreferences = appContext.getSharedPreferences(KEY_SP_PACKAGE, Context.MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//        editor.clear()
+//        editor.commit()
+
+        val scenario = launchActivity<MainActivity>()
+        //scenario.moveToState(Lifecycle.State.CREATED)
+        //  scenario.onActivity { activity ->
+        onView(withId(R.id.fab)).perform(click())
+        onView(withId(R.id.fabAbout)).perform(click())
+        onView(withId(R.id.okayButton)).perform(click())
+
+        //  }
+    }
+
 
     @Test
     fun testFabAbout() {

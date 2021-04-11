@@ -30,6 +30,9 @@ class GPSManager : LocationListener {
 
     private var managerStarted = false
 
+    /** The first read, we don't want any delays. After the first read, we want to use
+     * {@link LOCATION_UPDATE_TIME_MS} and {@link LOCATION_UPDATE_DISTANCE_METERS}. */
+    private var firstRead = true
 
     interface GPSListener {
         @WorkerThread
@@ -58,9 +61,10 @@ class GPSManager : LocationListener {
 
             this.locationManager!!.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    LOCATION_UPDATE_TIME_MS,
-                    LOCATION_UPDATE_DISTANCE_METERS,
+                    0L,
+                    0f,
                     this)
+            this.firstRead = true
 
             managerStarted = true
         }
@@ -83,9 +87,19 @@ class GPSManager : LocationListener {
     }
 
     @WorkerThread
+    @SuppressLint("MissingPermission") // the permission is checked before using checkPermissions
     override fun onLocationChanged(location: Location) {
         synchronized(this) {
             if (gpsListener != null) {
+                if (this.firstRead) {
+                    this.locationManager!!.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            LOCATION_UPDATE_TIME_MS,
+                            LOCATION_UPDATE_DISTANCE_METERS,
+                            this)
+                    this.firstRead = false
+                }
+
                 gpsListener!!.onGPSUpdate(location)
             }
         }

@@ -10,6 +10,8 @@ import android.content.Context
 import android.location.Location
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -51,12 +53,14 @@ class GPSManagerTest {
 
     @Test
     fun testStartAndStop() {
-        getInstrumentation().runOnMainSync(Runnable {
+        val scenario = launchActivity<MainActivity>()
+        scenario.moveToState(Lifecycle.State.CREATED)
+        scenario.onActivity { activity ->
             val listener = TestGPSListener()
             gpsManager.startGPSManager(appContext, listener)
-         //   listener.latch.await()  don't know why this is not called
+            //listener.latch.await()  // don't know why this is not called
             gpsManager.stopGPSManager()
-        })
+        }
     }
 
     class TestGPSListener : GPSManager.GPSListener {
