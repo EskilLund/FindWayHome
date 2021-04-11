@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    private val fabAnimationHandler = FabAnimationHandler(this)
+    private val fabAnimationHandler = FabAnimationManager(this)
 
     /**
      * Flag indicating that the first received position from the location manager is to be stored
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         val context = this
         val arrowImage = findViewById<ImageView>(R.id.arrowImageView)
 
-        val onItemClickInterface : FabAnimationHandler.ClickListener = object : FabAnimationHandler.ClickListener {
+        val onItemClickInterface : FabAnimationManager.ClickListener = object : FabAnimationManager.ClickListener {
             override fun onAboutClicked() {
                 Log.d(TAG, "onAboutClicked")
                 presentAboutDialog()

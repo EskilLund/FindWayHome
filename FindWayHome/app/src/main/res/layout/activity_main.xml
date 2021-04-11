@@ -28,8 +28,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/arrow_up_red_trans_back"/>
+        app:srcCompat="@drawable/arrow_up_red_trans_back"
+        android:contentDescription="@string/accessibility_arrow" />
 
+    <TextView
+        android:id="@+id/distanceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text=""
+        android:textSize="@dimen/distanceTextSize"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrowImageView" />
+
+
+    <!-- Debug -->
     <TextView
         android:id="@+id/latTextView"
         android:layout_width="wrap_content"
@@ -43,8 +60,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
     <TextView
         android:id="@+id/longTextView"
         android:layout_width="wrap_content"
@@ -58,7 +73,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/latTextView" />
-
     <TextView
         android:id="@+id/bearingTextView"
         android:layout_width="wrap_content"
@@ -80,7 +94,7 @@
 
 
 
-
+    <!-- FAB buttons -->
     <View
         android:id="@+id/fabBGLayout"
         android:layout_width="match_parent"
@@ -111,15 +125,15 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/fabTextSize"
             android:text="@string/action_about" />
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAbout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             app:backgroundTint="@color/fabbuttonbackground"
             app:fabSize="mini"
-            app:srcCompat="@drawable/round_info_black_18dp" />
+            app:srcCompat="@drawable/round_info_black_18dp"
+            android:contentDescription="@string/accessibility_fab_button_about" />
     </LinearLayout>
 
     <LinearLayout
@@ -141,28 +155,15 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/fabTextSize"
             android:text="@string/action_set_current_location" />
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabSetDestination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             app:backgroundTint="@color/fabbuttonbackground"
             app:fabSize="mini"
-            app:srcCompat="@drawable/round_explore_black_18dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:clipToPadding="false"
-        android:gravity="center_vertical"
-        android:padding="@dimen/standard_12"
-        tools:layout_editor_absoluteX="230dp"
-        tools:layout_editor_absoluteY="490dp">
-
+            app:srcCompat="@drawable/round_explore_black_18dp"
+            android:contentDescription="@string/accessibility_fab_button_set_destination" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -177,21 +178,7 @@
         app:backgroundTint="@color/fabbuttonbackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/round_pending_black_18dp" />
-
-    <TextView
-        android:id="@+id/distanceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="TextView"
-        android:textSize="@dimen/distanceTextSize"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/arrowImageView" />
-
+        app:srcCompat="@drawable/round_pending_black_18dp"
+        android:contentDescription="@string/accessibility_fab_button_main" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

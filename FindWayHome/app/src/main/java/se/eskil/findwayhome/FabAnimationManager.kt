@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class FabAnimationHandler(val activity: Activity) {
+class FabAnimationManager(val activity: Activity) {
     public interface ClickListener {
         fun onAboutClicked()
         fun onSetDestinationClicked()

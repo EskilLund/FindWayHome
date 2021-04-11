@@ -13,7 +13,7 @@
 
     <string name="permissions_are_mandatory">Detta är en navigationsapp. När appen inte tillåts access till GPS eller compass så är appen kan inte appen navigera.</string>
 
-    <string name="disclaimer_header_text">Välkommen till %1$s appen, en lättanvänd navigationsapp som pekar dig till din valda destination.\nVänligen var medveten om att denna appen bara pekar dig i riktning mot din destination, den pekar dig inte nödvändigtvis i den säkraste eller ens framkomliga vägen. Var alltid medveten om din omgivning och prioritera din säkerhet. Du använder denna appen på egen risk och på eget ansvar. Var säker och trevlig användning av appen.</string>
+    <string name="disclaimer_header_text">Välkommen till %1$s appen, en lättanvänd navigationsapp som pekar dig till din valda destination.\nVänligen var medveten om att denna appen bara pekar dig i riktning mot din destination, den pekar dig inte nödvändigtvis i den säkraste eller ens framkomliga vägen. Var alltid medveten om din omgivning och prioritera din säkerhet. Du använder denna appen på egen risk och på eget ansvar.</string>
     <string name="i_understand">Jag förstår att jag använder appen på egen risk</string>
     <string name="continue_text">Fortsätt</string>
     <string name="cancel_text">Avbryt</string>
@@ -39,4 +39,9 @@
     <string name="gps_is_disabled_text">GPS är inte aktiverat på din enhet. Vill du aktivera?</string>
     <string name="goto_gps_settings_text">Gå till GPS inställningar</string>
     <string name="compass_is_disabled_text">Kompass-sensor finns inte på din enhet.</string>
+
+    <string name="accessibility_fab_button_main">öppna inställningar</string>
+    <string name="accessibility_fab_button_about">om appen</string>
+    <string name="accessibility_fab_button_set_destination">sätt målet till nuvarande position</string>
+    <string name="accessibility_arrow">pil som pekar mot din valda destination</string>
 </resources>
