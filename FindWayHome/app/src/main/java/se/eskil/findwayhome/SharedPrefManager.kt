@@ -9,12 +9,14 @@ package se.eskil.findwayhome
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import androidx.annotation.VisibleForTesting
 
 class SharedPrefManager {
     private val KEY_LATITUDE = "destination_latitude"
     private val KEY_LONGITUDE = "destination_longitude"
     private val KEY_DISCLAIMER_ACCEPTED = "disclaimer_accepted"
-    private val SHARED_PREF_NAME = "PREFERENCE_DESTINATION"
+    @VisibleForTesting
+    public val SHARED_PREF_NAME = "PREFERENCE_DESTINATION"
     private val DEFAULT_VALUE = 0L
 
     /** Cache values so that the Shared Pref doesn't have to be read every time. */

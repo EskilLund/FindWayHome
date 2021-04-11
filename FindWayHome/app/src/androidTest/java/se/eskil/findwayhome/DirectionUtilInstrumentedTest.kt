@@ -8,6 +8,7 @@ package se.eskil.findwayhome
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +19,7 @@ class DirectionUtilInstrumentedTest {
 
     @Before
     fun setup() {
-        appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        appContext = getInstrumentation().targetContext
     }
 
     @Test

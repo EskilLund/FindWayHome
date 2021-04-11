@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.rule.GrantPermissionRule
 import org.junit.Before
 import org.junit.Rule
@@ -46,28 +47,20 @@ class MainActivityTest {
     @Before
     fun setup() {
         // Context of the app under test.
-        appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        appContext = getInstrumentation().targetContext
     }
 
     @Test
     fun testFirstStart() {
-        // Clear everything in the SharedPreferences
-        // Clear everything in the SharedPreferences
-//        val sharedPreferences: SharedPreferences = appContext.getSharedPreferences(KEY_SP_PACKAGE, Context.MODE_PRIVATE)
-//        val editor = sharedPreferences.edit()
-//        editor.clear()
-//        editor.commit()
+        clearSharedPref()
 
         val scenario = launchActivity<MainActivity>()
         //scenario.moveToState(Lifecycle.State.CREATED)
         //  scenario.onActivity { activity ->
-        onView(withId(R.id.fab)).perform(click())
-        onView(withId(R.id.fabAbout)).perform(click())
+        onView(withId(R.id.checkBoxAgree)).perform(click())
         onView(withId(R.id.okayButton)).perform(click())
-
-        //  }
+        onView(withId(R.id.laterButton)).perform(click())
     }
-
 
     @Test
     fun testFabAbout() {
@@ -90,5 +83,15 @@ class MainActivityTest {
         onView(withId(R.id.fabSetDestination)).perform(click())
         sleep(7000)
         onView(withId(R.id.distanceTextView)).check(matches(isDisplayed()))
+    }
+
+    private fun clearSharedPref() {
+        val sharedPrefManager = SharedPrefManager()
+        val sharedPreference = appContext.getSharedPreferences(
+                sharedPrefManager.SHARED_PREF_NAME,
+                Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.clear()
+        editor.commit()
     }
 }
