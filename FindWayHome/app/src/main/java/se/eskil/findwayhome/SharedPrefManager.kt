@@ -9,6 +9,7 @@ package se.eskil.findwayhome
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import android.location.LocationManager
 import androidx.annotation.VisibleForTesting
 
 class SharedPrefManager {
@@ -23,7 +24,7 @@ class SharedPrefManager {
     var destinationLatCache : Double? = null
     var destinationLongCache : Double? = null
 
-    fun setLongLat(context: Context, location: Location) {
+    fun setDestination(context: Context, location: Location) {
         val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreference.edit()
         putDouble(editor, KEY_LONGITUDE, location.longitude)
@@ -41,20 +42,11 @@ class SharedPrefManager {
         return sharedPreference.contains(KEY_LONGITUDE) && sharedPreference.contains(KEY_LATITUDE)
     }
 
-    fun getLongitude(context: Context) : Double {
-        if (destinationLongCache != null) {
-            return destinationLongCache!!
-        }
-        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
-        return getDouble(sharedPreference, KEY_LONGITUDE)
-    }
-
-    fun getLatitude(context: Context) : Double {
-        if (destinationLatCache != null) {
-            return destinationLatCache!!
-        }
-        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
-        return getDouble(sharedPreference, KEY_LATITUDE)
+    fun getDestination(context: Context) : Location {
+        val destination = Location(LocationManager.GPS_PROVIDER)
+        destination.latitude = getLatitude(context)
+        destination.longitude = getLongitude(context)
+        return destination
     }
 
     fun isDisclaimerAccepted(context: Context) : Boolean {
@@ -67,6 +59,22 @@ class SharedPrefManager {
         val editor = sharedPreference.edit()
         editor.putBoolean(KEY_DISCLAIMER_ACCEPTED, true)
         editor.commit() // commit = sync, apply = async
+    }
+
+    private fun getLongitude(context: Context) : Double {
+        if (destinationLongCache != null) {
+            return destinationLongCache!!
+        }
+        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        return getDouble(sharedPreference, KEY_LONGITUDE)
+    }
+
+    private fun getLatitude(context: Context) : Double {
+        if (destinationLatCache != null) {
+            return destinationLatCache!!
+        }
+        val sharedPreference = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        return getDouble(sharedPreference, KEY_LATITUDE)
     }
 
     /**

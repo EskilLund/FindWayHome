@@ -243,9 +243,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                     val locationTurningTorso = Location(LocationManager.GPS_PROVIDER)
                     locationTurningTorso.latitude = 55.607997568
                     locationTurningTorso.longitude = 12.97249611
-                    sharedPrefManager.setLongLat(this, locationTurningTorso)
+                    sharedPrefManager.setDestination(this, locationTurningTorso)
                 } else {
-                    sharedPrefManager.setLongLat(this, location)
+                    sharedPrefManager.setDestination(this, location)
                 }
                 firstReceivedPositionIsDestination = false
                 findViewById<ImageView>(R.id.arrowImageView).alpha = 1.0f
@@ -253,13 +253,9 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
             }
 
             if (sharedPrefManager.isDestinationSet(this)) {
-                val destination = Location(LocationManager.GPS_PROVIDER)
-                // TODO: possibly replace getLatitude/getLongitude with getLocation
-                destination.latitude = sharedPrefManager.getLatitude(this)
-                destination.longitude = sharedPrefManager.getLongitude(this)
+                val destination = sharedPrefManager.getDestination(this)
                 bearingToDestination = location.bearingTo(destination)
                 Log.d(TAG, "bearingToDestination: " + bearingToDestination)
-
                 Log.d(TAG, "distance: " + location.distanceTo(destination))
 
                 val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
