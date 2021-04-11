@@ -14,8 +14,8 @@ android {
         applicationId "se.eskil.findwayhome"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 10 // 1000 * Major + Minor
-        versionName "0.10" // remember to update about_version_info_body_text
+        versionCode 11 // 1000 * Major + Minor
+        versionName "0.11" // remember to update about_version_info_body_text
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
