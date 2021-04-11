@@ -8,6 +8,8 @@ package se.eskil.findwayhome
 
 import android.content.Context
 import android.location.Location
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -59,12 +61,18 @@ class GPSManagerTest {
 
     class TestGPSListener : GPSManager.GPSListener {
         val latch = CountDownLatch(1)
+        @WorkerThread
         override fun onGPSUpdate(location: Location) {
-            latch.countDown()
+            synchronized(this) {
+                latch.countDown()
+            }
         }
 
+        @UiThread
         override fun onGPSSensorsNotExisting() {
-            latch.countDown()
+            synchronized(this) {
+                latch.countDown()
+            }
         }
     }
 }

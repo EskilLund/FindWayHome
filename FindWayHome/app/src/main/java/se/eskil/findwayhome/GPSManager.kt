@@ -13,6 +13,8 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 
 /**
  * Handles the interaction with the GPS.
@@ -30,11 +32,14 @@ class GPSManager : LocationListener {
 
 
     interface GPSListener {
+        @WorkerThread
         fun onGPSUpdate(location: Location)
+        @UiThread
         fun onGPSSensorsNotExisting()
     }
 
     @SuppressLint("MissingPermission") // the permission is checked before using checkPermissions
+    @UiThread
     fun startGPSManager(context : Context, gpsListener: GPSListener) {
         Log.d(TAG, "startGPSManager")
         synchronized(this) {
@@ -61,6 +66,7 @@ class GPSManager : LocationListener {
         }
     }
 
+    @UiThread
     fun stopGPSManager() {
         Log.d(TAG, "stopGPSManager")
         synchronized(this) {
@@ -76,6 +82,7 @@ class GPSManager : LocationListener {
         }
     }
 
+    @WorkerThread
     override fun onLocationChanged(location: Location) {
         synchronized(this) {
             if (gpsListener != null) {
@@ -84,6 +91,7 @@ class GPSManager : LocationListener {
         }
     }
 
+    @WorkerThread
     override fun onStatusChanged(provider : String, status : Int, extras : Bundle) {
         // ignoring
     }

@@ -11,6 +11,8 @@ import android.content.Context
 import android.hardware.*
 import android.location.Location
 import android.util.Log
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 
 
 /**
@@ -38,10 +40,13 @@ class CompassManager : SensorEventListener {
     private var location: Location? = null
 
     interface CompassListener {
+        @WorkerThread
         fun onCompassHeading(heading: Float)
+        @UiThread
         fun onCompassSensorsNotExisting()
     }
 
+    @UiThread
     fun startCompassManager(context: Context, compassListener: CompassListener) {
         Log.d(TAG, "startCompassManager")
         synchronized(this) {
@@ -64,18 +69,19 @@ class CompassManager : SensorEventListener {
             sensorManager!!.registerListener(
                 this,
                 gsensor,
-                SensorManager.SENSOR_DELAY_UI
+                SensorManager.SENSOR_DELAY_GAME
             )
             sensorManager!!.registerListener(
                 this,
                 msensor,
-                SensorManager.SENSOR_DELAY_UI
+                SensorManager.SENSOR_DELAY_GAME
             )
 
             managerStarted = true
         }
     }
 
+    @UiThread
     fun stopCompassManager() {
         Log.d(TAG, "stopGPSManager")
         synchronized(this) {
@@ -90,12 +96,14 @@ class CompassManager : SensorEventListener {
         }
     }
 
+    @UiThread
     fun setLocation(location: Location) {
         synchronized(this) {
             this.location = location
         }
     }
 
+    @UiThread
     fun setAzimuthFix(fix: Float) {
         azimuthFix = fix
     }
@@ -104,6 +112,7 @@ class CompassManager : SensorEventListener {
         setAzimuthFix(0f)
     }
 
+    @WorkerThread
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) {
             return
@@ -158,6 +167,7 @@ class CompassManager : SensorEventListener {
         }
     }
 
+    @WorkerThread
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         Log.d(TAG, "onAccuracyChanged, accuracy: " + accuracy)
     }

@@ -22,6 +22,8 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.*
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
@@ -216,65 +218,68 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         gpsManager.stopGPSManager()
     }
 
+    @WorkerThread
     override fun onGPSUpdate(location: Location) {
-        Log.d(
-            TAG,
-            "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
-        )
-
-        compassManager.setLocation(location)
-
-        if (DEBUG) {
-            val latTextView = findViewById<TextView>(R.id.latTextView)
-            val longTextView = findViewById<TextView>(R.id.longTextView)
-            latTextView.visibility = View.VISIBLE
-            longTextView.visibility = View.VISIBLE
-            latTextView.text = "lat: " + location.latitude
-            longTextView.text = "long: " + location.longitude
-        }
-
-        if (firstReceivedPositionIsDestination) {
-            if (DEBUG) {
-                // for debugging purposes, set the destination to Turning Torso in Malmö, Sweden
-                val locationTurningTorso = Location(LocationManager.GPS_PROVIDER)
-                locationTurningTorso.latitude = 55.607997568
-                locationTurningTorso.longitude = 12.97249611
-                sharedPrefManager.setLongLat(this, locationTurningTorso)
-            } else {
-                sharedPrefManager.setLongLat(this, location)
-            }
-            firstReceivedPositionIsDestination = false
-            findViewById<ImageView>(R.id.arrowImageView).alpha = 1.0f
-            Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()
-        }
-
-        if (sharedPrefManager.isDestinationSet(this)) {
-            val destination = Location(LocationManager.GPS_PROVIDER)
-            // TODO: possibly replace getLatitude/getLongitude with getLocation
-            destination.latitude = sharedPrefManager.getLatitude(this)
-            destination.longitude = sharedPrefManager.getLongitude(this)
-            bearingToDestination = location.bearingTo(destination)
-            Log.d(TAG, "bearingToDestination: " + bearingToDestination)
-
-            Log.d(TAG, "distance: " + location.distanceTo(destination))
-
-            val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
-            distanceTextView.text = directionUtil.getDistanceString(
-                location.distanceTo(destination),
-                this
+        runOnUiThread() {
+            Log.d(
+                    TAG,
+                    "onLocationChanged, Latitude: " + location.latitude + " , Longitude: " + location.longitude
             )
-            distanceTextView.visibility = if (fabAnimationHandler.isOpen) {
-                View.INVISIBLE
-            } else {
-                View.VISIBLE
+
+            compassManager.setLocation(location)
+
+            if (DEBUG) {
+                val latTextView = findViewById<TextView>(R.id.latTextView)
+                val longTextView = findViewById<TextView>(R.id.longTextView)
+                latTextView.visibility = View.VISIBLE
+                longTextView.visibility = View.VISIBLE
+                latTextView.text = "lat: " + location.latitude
+                longTextView.text = "long: " + location.longitude
             }
 
-//            val locationNewYork = Location(LocationManager.GPS_PROVIDER)
-//            locationNewYork.latitude = 40.730610
-//            locationNewYork.longitude = -73.935242
-//            Log.d(TAG, "newyorkbearing: " + location.bearingTo(locationNewYork))
+            if (firstReceivedPositionIsDestination) {
+                if (DEBUG) {
+                    // for debugging purposes, set the destination to Turning Torso in Malmö, Sweden
+                    val locationTurningTorso = Location(LocationManager.GPS_PROVIDER)
+                    locationTurningTorso.latitude = 55.607997568
+                    locationTurningTorso.longitude = 12.97249611
+                    sharedPrefManager.setLongLat(this, locationTurningTorso)
+                } else {
+                    sharedPrefManager.setLongLat(this, location)
+                }
+                firstReceivedPositionIsDestination = false
+                findViewById<ImageView>(R.id.arrowImageView).alpha = 1.0f
+                Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()
+            }
+
+            if (sharedPrefManager.isDestinationSet(this)) {
+                val destination = Location(LocationManager.GPS_PROVIDER)
+                // TODO: possibly replace getLatitude/getLongitude with getLocation
+                destination.latitude = sharedPrefManager.getLatitude(this)
+                destination.longitude = sharedPrefManager.getLongitude(this)
+                bearingToDestination = location.bearingTo(destination)
+                Log.d(TAG, "bearingToDestination: " + bearingToDestination)
+
+                Log.d(TAG, "distance: " + location.distanceTo(destination))
+
+                val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
+                distanceTextView.text = directionUtil.getDistanceString(
+                        location.distanceTo(destination),
+                        this
+                )
+                distanceTextView.visibility = if (fabAnimationHandler.isOpen) {
+                    View.INVISIBLE
+                } else {
+                    View.VISIBLE
+                }
+
+                //            val locationNewYork = Location(LocationManager.GPS_PROVIDER)
+                //            locationNewYork.latitude = 40.730610
+                //            locationNewYork.longitude = -73.935242
+                //            Log.d(TAG, "newyorkbearing: " + location.bearingTo(locationNewYork))
 
 
+            }
         }
     }
 
@@ -323,31 +328,32 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         return true
     }
 
+    @WorkerThread
     override fun onCompassHeading(heading: Float) {
-        if (DEBUG) {
-            val bearingTextView = findViewById<TextView>(R.id.bearingTextView)
-            bearingTextView.visibility = View.VISIBLE
-            bearingTextView.text = "Compass bearing: " + heading
-        }
-        Log.d(TAG, "onCompassHeading heading: " + heading)
-
-        if (bearingToDestination != null) {
-            val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
-            var turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
-            Log.d(
-                TAG,
-                "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees
-            )
-
-            if (previousImageDirection - turnDegrees > 180) {
-                // make the animation go clockwise and not go the longer way counterclockwise
-                turnDegrees += 360.0f
-            } else if (turnDegrees - previousImageDirection > 180) {
-                // make the animation go counterclockwise and not go the longer way clockwise
-                previousImageDirection += 360.0f
+        runOnUiThread {
+            if (DEBUG) {
+                val bearingTextView = findViewById<TextView>(R.id.bearingTextView)
+                bearingTextView.visibility = View.VISIBLE
+                bearingTextView.text = "Compass bearing: " + heading
             }
+            Log.d(TAG, "onCompassHeading heading: " + heading)
 
-            runOnUiThread {
+            if (bearingToDestination != null) {
+                val arrowImageView = findViewById<ImageView>(R.id.arrowImageView)
+                var turnDegrees = directionUtil.degreesToTurnImage(bearingToDestination!!, heading)
+                Log.d(
+                    TAG,
+                    "onCompassHeading, animation from " + previousImageDirection + " to " + turnDegrees
+                )
+
+                if (previousImageDirection - turnDegrees > 180) {
+                    // make the animation go clockwise and not go the longer way counterclockwise
+                    turnDegrees += 360.0f
+                } else if (turnDegrees - previousImageDirection > 180) {
+                    // make the animation go counterclockwise and not go the longer way clockwise
+                    previousImageDirection += 360.0f
+                }
+
                 val rotate = RotateAnimation(
                     previousImageDirection,
                     turnDegrees,
@@ -362,15 +368,16 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                 arrowImageView.startAnimation(rotate)
                 previousImageDirection = turnDegrees
                 //arrowImageView.setRotation(turnDegrees)
+
+    //            arrowImageView.animate().rotation(turnDegrees).setDuration((compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong()).start();
+
+                //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
+                //Log.d(TAG, "rotate degree: " + degree)
             }
-
-//            arrowImageView.animate().rotation(turnDegrees).setDuration((compassManager.COMPASS_UPDATE_DELAY_MS * 0.8).toLong()).start();
-
-            //Log.d(TAG, "rotate bearingToDestination: " + bearingToDestination)
-            //Log.d(TAG, "rotate degree: " + degree)
         }
     }
 
+    @UiThread
     override fun onCompassSensorsNotExisting() {
         val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         alertDialogBuilder.setMessage(R.string.compass_is_disabled_text)
@@ -381,6 +388,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         alert.show()
     }
 
+    @UiThread
     override fun onGPSSensorsNotExisting() {
         val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         alertDialogBuilder.setMessage(R.string.gps_is_disabled_text)

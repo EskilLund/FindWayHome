@@ -7,6 +7,8 @@
 package se.eskil.findwayhome
 
 import android.content.Context
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -56,12 +58,18 @@ class CompassManagerTest {
 
     class TestCompassListener : CompassListener {
         val latch = CountDownLatch(1)
+        @WorkerThread
         override fun onCompassHeading(heading: Float) {
-            latch.countDown()
+            synchronized(this) {
+                latch.countDown()
+            }
         }
 
+        @UiThread
         override fun onCompassSensorsNotExisting() {
-            latch.countDown()
+            synchronized(this) {
+                latch.countDown()
+            }
         }
     }
 }
