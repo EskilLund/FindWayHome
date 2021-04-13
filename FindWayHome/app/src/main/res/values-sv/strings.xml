@@ -8,7 +8,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">FindWayHome</string>
-    <string name="action_set_current_location">Sätt målet till nuvarande position</string>
+    <string name="action_set_current_location">Sätt mål</string>
     <string name="action_about">Om appen</string>
 
     <string name="permissions_are_mandatory">Detta är en navigationsapp. När appen inte tillåts access till GPS eller compass så är appen kan inte appen navigera.</string>
@@ -25,11 +25,11 @@
     <string name="set_destination_later">Senare</string>
 
     <string name="about_general_header_text">Generellt</string>
-    <string name="about_general_body_text">%1$s är en lättanvänd navigationsapp som helt enkelt pekar en pil till ditt valda mål. När du är på ditt önskade mål (t.ex. hemma, på din kampingplats eller vid din parkerade bil), välj \"Sätt målet till nuvarande position\". Pilen kommer hela tiden att peka till ditt valda mål.</string>
+    <string name="about_general_body_text">%1$s är en lättanvänd navigationsapp som helt enkelt pekar en pil till ditt valda mål. När du är på ditt önskade mål (t.ex. hemma, på din kampingplats eller vid din parkerade bil), välj \"Sätt mål\". Pilen kommer hela tiden att peka till ditt valda mål.</string>
     <string name="about_privacy_header_text">Integritet</string>
     <string name="about_privacy_body_text">Denna appen sparar inte ditt satta mål någonstans utom lokalt på din enhet. Det laddas ALDRIG upp någonstans. Om du rensar appens data eller tar bort appen så försvinner ditt satta mål. Emellertid, precis som andra appar på Google Play så kan kraschar och anonym användningsdata laddas upp för att hjälpa till att förbättra appen.</string>
     <string name="about_version_info_header_text">Versionsinformation</string>
-    <string name="about_version_info_body_text">Version 0.12 (beta)</string>
+    <string name="about_version_info_body_text">Version 1.0</string>
 
     <string name="okay_text">OK</string>
 
@@ -42,6 +42,6 @@
 
     <string name="accessibility_fab_button_main">öppna inställningar</string>
     <string name="accessibility_fab_button_about">om appen</string>
-    <string name="accessibility_fab_button_set_destination">sätt målet till nuvarande position</string>
+    <string name="accessibility_fab_button_set_destination">sätt mål</string>
     <string name="accessibility_arrow">pil som pekar mot din valda destination</string>
 </resources>

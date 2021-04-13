@@ -121,10 +121,14 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@string/action_about"
             android:textSize="@dimen/fabTextSize"
-            android:text="@string/action_about" />
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_weight=".75"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAbout"
             android:layout_width="wrap_content"
@@ -151,10 +155,14 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="@dimen/fabTextSize"
-            android:text="@string/action_set_current_location" />
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_weight=".75"
+            android:text="@string/action_set_current_location"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabSetDestination"
             android:layout_width="wrap_content"

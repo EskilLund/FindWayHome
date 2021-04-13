@@ -8,7 +8,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">FindWayHome</string>
-    <string name="action_set_current_location">Use current location</string>
+    <string name="action_set_current_location">Set location</string>
     <string name="action_about">About</string>
 
     <string name="permissions_are_mandatory">This is a navigation app. When the app is not granted access to the GPS and compass, this app will not be able to navigate.</string>
@@ -24,11 +24,11 @@
     <string name="set_destination_later">Later</string>
 
     <string name="about_general_header_text">General</string>
-    <string name="about_general_body_text">%1$s is a very easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home, at your camp site or at your parked car), choose \"Use current location\" and the arrow will always point to that destination.</string>
+    <string name="about_general_body_text">%1$s is a very easy to use navigation app that simply points an arrow to your set destination. When you are at your preferred destination (e.g. at home, at your camp site or at your parked car), choose \"Set location\" and the arrow will always point to that destination.</string>
     <string name="about_privacy_header_text">Privacy</string>
     <string name="about_privacy_body_text">This app does not store your saved destination anywhere else but locally on your device. It is NEVER uploaded anywhere. If you clear the apps data or delete the app, your set destination is gone. However, just like any other app found on Google Play, crashes and anonymous usage data can be uploaded to help in improving the app.</string>
     <string name="about_version_info_header_text">Version Info</string>
-    <string name="about_version_info_body_text">Version 0.12 (beta)</string>
+    <string name="about_version_info_body_text">Version 1.0</string>
 
     <string name="okay_text">OK</string>
     <string name="cancel_text">Cancel</string>
@@ -42,6 +42,6 @@
 
     <string name="accessibility_fab_button_main">open options</string>
     <string name="accessibility_fab_button_about">about</string>
-    <string name="accessibility_fab_button_set_destination">use current location</string>
+    <string name="accessibility_fab_button_set_destination">set location</string>
     <string name="accessibility_arrow">arrow pointing to your set destination</string>
 </resources>
