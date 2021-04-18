@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         if (!sharedPrefManager.isDisclaimerAccepted(this) || !sharedPrefManager.isDestinationSet(
                 this
             )) {
-            arrowImage.alpha = 0.2f
+            arrowImage.visibility = View.INVISIBLE
         }
 
         if (!sharedPrefManager.isDisclaimerAccepted(this)) {
