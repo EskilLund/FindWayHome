@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+  -->
+<rotate
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="90"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="360">
+
+    <shape
+        android:innerRadiusRatio="3"
+        android:shape="ring"
+        android:innerRadius="40dp"
+        android:thicknessRatio="7.0">
+
+        <gradient
+            android:centerColor="@color/fabbuttonbackground"
+            android:endColor="@color/fabbuttonbackground"
+            android:startColor="@color/fabbuttonbackground"
+            android:angle="0"
+            android:type="sweep"
+            android:useLevel="false" />
+    </shape>
+</rotate>

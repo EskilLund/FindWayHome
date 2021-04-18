@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
      */
     private var firstReceivedPositionIsDestination = false
 
-    private lateinit var gpsManager: GPSManager
-    private lateinit var compassManager: CompassManager
+    private lateinit var gpsManager : GPSManager
+    private lateinit var compassManager : CompassManager
 
     // TODO: can these be static?
     private val sharedPrefManager = SharedPrefManager()
@@ -56,12 +56,14 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
      * Direction from current position to the destination position.
      * This is in degrees east of true north.
      */
-    var bearingToDestination : Float? = null
+    private var bearingToDestination : Float? = null
 
     /** Used as starting point for the rotation animation. */
-    var previousImageDirection : Float = 0f
+    private var previousImageDirection : Float = 0f
 
     private val LOCATION_PERMISSION_CODE = 2
+
+    private lateinit var waitForGPSDialog : Dialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +90,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                 if (!sharedPrefManager.isDisclaimerAccepted(context)) {
                     presentDisclaimerDialog()
                 } else {
+                    presentWaitForGPSDialog()
                     firstReceivedPositionIsDestination = true
                     startGetLocation()
                 }
@@ -120,6 +123,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
 
         val yesButton = dialog.findViewById(R.id.yesButton) as Button
         yesButton.setOnClickListener {
+            presentWaitForGPSDialog()
             firstReceivedPositionIsDestination = true
             startGetLocation()
             dialog.dismiss()
@@ -189,6 +193,18 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
         dialog.show()
     }
 
+    fun presentWaitForGPSDialog() {
+        waitForGPSDialog = Dialog(this)
+        waitForGPSDialog.setContentView(R.layout.wait_for_gps_dialog)
+        waitForGPSDialog.show()
+    }
+
+    fun closeWaitForGPSDialog() {
+        if (waitForGPSDialog != null) {
+            waitForGPSDialog.dismiss()
+        }
+    }
+
     override fun onPause() {
         fabAnimationHandler.disableFab()
         stopGetLocation()
@@ -247,6 +263,7 @@ class MainActivity : AppCompatActivity(), GPSManager.GPSListener, CompassManager
                 } else {
                     sharedPrefManager.setDestination(this, location)
                 }
+                closeWaitForGPSDialog()
                 firstReceivedPositionIsDestination = false
                 findViewById<ImageView>(R.id.arrowImageView).alpha = 1.0f
                 Toast.makeText(this, R.string.destination_set, Toast.LENGTH_LONG).show()

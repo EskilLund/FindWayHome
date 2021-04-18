@@ -1,3 +1,9 @@
+<!--
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+  -->
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="child_fab_margin">40dp</dimen>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <eckelundgren@gmail.com> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   Eskil
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="se.eskil.findwayhome">
     <!-- To request foreground location access, declare one of these permissions. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Required only when requesting background location access on Android 10 (API level 29).
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
-
-    <!-- TODO: should not be needed
-    <uses-permission android:name="android.permission.INTERNET"/> -->
 
     <application
         android:allowBackup="true"
@@ -24,7 +25,6 @@
             android:theme="@style/Theme.FindWayHome.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -14,8 +14,8 @@ android {
         applicationId "se.eskil.findwayhome"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1001 // 1000 * Major + Minor
-        versionName "1.1" // remember to update about_version_info_body_text
+        versionCode 1002 // 1000 * Major + Minor
+        versionName "1.2" // remember to update about_version_info_body_text
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,12 +42,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
- //   androidTestImplementation 'androidx.test.ext.junit.rules:1.3.0'
     androidTestImplementation 'androidx.test:core-ktx:1.3.0'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
